@@ -36,6 +36,9 @@ class _GamePageState extends State<GamePage> {
 
   int get passed => answers.where((answer) => !answer.correct).length;
 
+  double dragX = 0;
+  bool isAnimating = false;
+
   @override
   void initState() {
     super.initState();
@@ -164,68 +167,77 @@ class _GamePageState extends State<GamePage> {
 
                 Expanded(
                   child: Center(
-                    child: Dismissible(
-                      key: ValueKey("$currentWord-$currentIndex"),
-                      direction: DismissDirection.horizontal,
-                      onDismissed: (direction) {
-                        if (direction == DismissDirection.startToEnd) {
-                          _answer(true);
-                        } else {
-                          _answer(false);
-                        }
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(32),
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                              color: Colors.black.withOpacity(.25),
-                            ),
-                          ],
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Next card underneath
+                        Transform.scale(
+                          scale: .92,
+                          child: _wordCard(
+                            words[(currentIndex + 1) % words.length],
+                          ),
                         ),
-                        padding: const EdgeInsets.all(30),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  currentWord,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 54,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: const [
-                                Text(
-                                  "← Pass",
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                                Text(
-                                  "Correct →",
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        // Current draggable card
+                        GestureDetector(
+                          onHorizontalDragUpdate: (details) {
+                            setState(() {
+                              dragX += details.delta.dx;
+                            });
+                          },
+
+                          onHorizontalDragEnd: (_) {
+                            if (dragX.abs() > 120) {
+                              final correct = dragX > 0;
+
+                              setState(() {
+                                isAnimating = true;
+
+                                // fling card completely off screen
+                                dragX = correct
+                                    ? MediaQuery.of(context).size.width * 1.5
+                                    : -MediaQuery.of(context).size.width * 1.5;
+                              });
+
+                              Future.delayed(
+                                const Duration(milliseconds: 300),
+                                () {
+                                  _answer(correct);
+
+                                  setState(() {
+                                    dragX = 0;
+                                    isAnimating = false;
+                                  });
+                                },
+                              );
+                            } else {
+                              setState(() {
+                                isAnimating = true;
+                                dragX = 0;
+                              });
+
+                              Future.delayed(
+                                const Duration(milliseconds: 200),
+                                () {
+                                  setState(() {
+                                    isAnimating = false;
+                                  });
+                                },
+                              );
+                            }
+                          },
+
+                          child: AnimatedContainer(
+                            duration: isAnimating
+                                ? const Duration(milliseconds: 250)
+                                : Duration.zero,
+
+                            transform: Matrix4.translationValues(dragX, 0, 0),
+
+                            child: _wordCard(currentWord),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
@@ -233,6 +245,56 @@ class _GamePageState extends State<GamePage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _wordCard(String word) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+            color: Colors.black.withOpacity(.25),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(30),
+      child: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: Text(
+                word,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 54,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                "← Pass",
+                style: TextStyle(fontSize: 22, color: Colors.black54),
+              ),
+
+              Text(
+                "Correct →",
+                style: TextStyle(fontSize: 22, color: Colors.black54),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
