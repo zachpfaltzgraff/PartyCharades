@@ -88,8 +88,6 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
 
   @override
   Widget build(BuildContext context) {
-
-    print(widget.deck == null);
     return Padding(
       padding: EdgeInsets.only(
         left: 20,
@@ -99,92 +97,109 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
       ),
       child: Form(
         key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                widget.deck == null ? "Create Deck" : "Edit Deck",
-                style: Theme.of(context).textTheme.headlineSmall,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.deck == null ? "Create Deck" : "Edit Deck",
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+        
+            const SizedBox(height: 24),
+        
+            TextFormField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: "Deck Name",
+                border: OutlineInputBorder(),
               ),
-
-              const SizedBox(height: 24),
-
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: "Deck Name",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Enter a deck name.";
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 24),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _wordController,
-                      decoration: const InputDecoration(
-                        labelText: "Add Word",
-                        border: OutlineInputBorder(),
-                      ),
-                      onSubmitted: (_) => addWord(),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return "Enter a deck name.";
+                }
+                return null;
+              },
+            ),
+        
+            const SizedBox(height: 24),
+        
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _wordController,
+                    decoration: const InputDecoration(
+                      labelText: "Add Word",
+                      border: OutlineInputBorder(),
                     ),
+                    onSubmitted: (_) => addWord(),
                   ),
-                  const SizedBox(width: 10),
-                  FilledButton(
-                    onPressed: addWord,
-                    child: const Icon(Icons.add),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              if (words.isNotEmpty)
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: words.map((word) {
-                    return Chip(
-                      label: Text(word),
-                      deleteIcon: const Icon(Icons.close),
-                      onDeleted: () {
-                        setState(() {
-                          words.remove(word);
-                        });
-                      },
-                    );
-                  }).toList(),
                 ),
+                const SizedBox(width: 10),
+                FilledButton(
+                  onPressed: addWord,
+                  child: const Icon(Icons.add),
+                ),
+              ],
+            ),
+        
+            const SizedBox(height: 20),
 
-              const SizedBox(height: 30),
+            Expanded(
+              child: words.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "No words yet.\nAdd your first word above!",
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : ListView.separated(
+                      itemCount: words.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final word = words[index];
 
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: saving ? null : saveDeck,
-                  icon: saving
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
+                        return Card(
+                          elevation: 1,
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              child: Text("${index + 1}"),
+                            ),
+                            title: Text(word),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete_outline),
+                              color: Colors.red,
+                              onPressed: () {
+                                setState(() {
+                                  words.removeAt(index);
+                                });
+                              },
+                            ),
                           ),
-                        )
-                      : const Icon(Icons.save),
-                  label: const Text("Create Deck"),
-                ),
+                        );
+                      },
+                    ),
+            ),
+        
+            const SizedBox(height: 30),
+        
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: saving ? null : saveDeck,
+                icon: saving
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Icon(Icons.save),
+                label: const Text("Submit"),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
