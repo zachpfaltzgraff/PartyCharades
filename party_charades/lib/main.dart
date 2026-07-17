@@ -4,6 +4,7 @@ import 'package:party_charades/services/database_service.dart';
 import 'package:party_charades/services/deck_service.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
   await DatabaseService.initialize();
   await DeckService.loadStarterDecks();
