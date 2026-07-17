@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:party_charades/pages/home_page.dart';
 import 'package:party_charades/services/database_service.dart';
@@ -11,6 +12,10 @@ Future<void> main() async {
 
   await DatabaseService.initialize();
   await DeckService.loadStarterDecks();
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
 
   runApp(const MyApp());
 }

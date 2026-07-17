@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
+import 'package:party_charades/pages/gameplay/game_page.dart';
 import 'package:party_charades/services/settings_service.dart';
 
 class ReadyPage extends StatefulWidget {
@@ -151,15 +152,15 @@ class _ReadyPageState extends State<ReadyPage> {
                       ),
                     ),
                     onPressed: () {
-                      // Navigator.pushReplacement(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (_) => GamePage(
-                      //       deck: widget.deck,
-                      //       roundLength: roundLength,
-                      //     ),
-                      //   ),
-                      // );
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GamePage(
+                            deck: widget.deck,
+                            roundLength: roundLength,
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ),
