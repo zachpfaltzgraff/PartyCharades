@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:party_charades/pages/home_page.dart';
+import 'package:party_charades/services/database_service.dart';
 
-void main() {
+Future<void> main() async {
+
+  await DatabaseService.initialize();
+
   runApp(const MyApp());
 }
 
