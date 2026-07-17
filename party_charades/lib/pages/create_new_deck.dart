@@ -62,11 +62,6 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
     if (!_formKey.currentState!.validate()) return;
 
     if (words.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Add at least one word."),
-        ),
-      );
       return;
     }
 
@@ -142,7 +137,7 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
                 ),
               ],
             ),
-        
+
             const SizedBox(height: 20),
 
             Expanded(
