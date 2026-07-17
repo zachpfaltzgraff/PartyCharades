@@ -47,4 +47,10 @@ class DeckService {
 
     return decks;
   }
+
+  static Future<void> saveDeck(Deck deck) async {
+    await DatabaseService.isar.writeTxn(() async {
+      await DatabaseService.isar.decks.put(deck);
+    });
+  }
 }

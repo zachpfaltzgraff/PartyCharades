@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
+import 'package:party_charades/pages/create_new_deck.dart';
 import 'package:party_charades/pages/deck_card.dart';
 import 'package:party_charades/services/deck_service.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -62,8 +63,17 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // TODO: create deck
+        onPressed: () async {
+          final created = await showModalBottomSheet<bool>(
+            context: context,
+            isScrollControlled: true,
+            useSafeArea: true,
+            builder: (_) => const CreateNewDeck(),
+          );
+
+          if (created == true) {
+            loadDecks();
+          }
         },
         icon: const Icon(Icons.add),
         label: const Text("New Deck"),
