@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/deck_card.dart';
 import 'package:party_charades/services/deck_service.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,11 +14,37 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Deck> decks = [];
   bool loading = true;
+  BannerAd? bannerAd;
+
+  bool loadedAdProperly = false;
 
   @override
   void initState() {
     super.initState();
     loadDecks();
+
+    bannerAd = BannerAd(
+      adUnitId: 'ca-app-pub-5936113316990256~8049431277',
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            loadedAdProperly = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('Banner failed: $error');
+          ad.dispose();
+        },
+      ),
+    )..load();
+  }
+
+  @override
+  void dispose() {
+    bannerAd?.dispose();
+    super.dispose();
   }
 
   Future<void> loadDecks() async {
@@ -52,28 +79,41 @@ class _HomePageState extends State<HomePage> {
             end: Alignment.bottomRight,
           ),
         ),
-        child: RefreshIndicator(
-          onRefresh: loadDecks,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: loading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : GridView.builder(
-                    itemCount: decks.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: .85,
-                    ),
-                    itemBuilder: (context, index) {
-                      return DeckCard(deck: decks[index]);
-                    },
-                  ),
-          ),
+        child: Column(
+          children: [
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: loadDecks,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: loading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : GridView.builder(
+                          itemCount: decks.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: .85,
+                          ),
+                          itemBuilder: (context, index) {
+                            return DeckCard(deck: decks[index]);
+                          },
+                        ),
+                ),
+              ),
+            ),
+            if(loadedAdProperly)
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                height: bannerAd!.size.height.toDouble(),
+                width: bannerAd!.size.width.toDouble(),
+                child: AdWidget(ad: bannerAd!),
+              ),
+          ],
         ),
       ),
     );
