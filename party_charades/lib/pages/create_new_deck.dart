@@ -81,6 +81,38 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
     Navigator.pop(context, true);
   }
 
+  Future<void> _deleteDeck() async {
+    final delete = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Delete Deck?"),
+          content: Text(
+            'Are you sure you want to delete "${widget.deck!.name}"?\n\nThis cannot be undone.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("Cancel"),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (delete != true) return;
+
+    await DeckService.deleteDeck(widget.deck!);
+
+    if (!mounted) return;
+
+    Navigator.pop(context, true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -177,7 +209,26 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
             ),
         
             const SizedBox(height: 30),
-        
+
+
+            if (widget.deck != null) ...[
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.red,
+                  ),
+                  label: const Text(
+                    "Delete Deck",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onPressed: _deleteDeck,
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(

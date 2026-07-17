@@ -53,4 +53,10 @@ class DeckService {
       await DatabaseService.isar.decks.put(deck);
     });
   }
+
+  static Future<void> deleteDeck(Deck deck) async {
+    await DatabaseService.isar.writeTxn(() async {
+      await DatabaseService.isar.decks.delete(deck.id);
+    });
+  }
 }
