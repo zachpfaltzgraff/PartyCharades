@@ -3,7 +3,12 @@ import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/services/deck_service.dart';
 
 class CreateNewDeck extends StatefulWidget {
-  const CreateNewDeck({super.key});
+  final Deck? deck;
+
+  const CreateNewDeck({
+    super.key,
+    this.deck,
+  });
 
   @override
   State<CreateNewDeck> createState() => _CreateNewDeckState();
@@ -18,6 +23,16 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
   final List<String> words = [];
 
   bool saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.deck != null) {
+      _nameController.text = widget.deck!.name;
+      words.addAll(widget.deck!.words);
+    }
+  }
 
   @override
   void dispose() {
@@ -59,10 +74,10 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
       saving = true;
     });
 
-    final deck = Deck()
-      ..name = _nameController.text.trim()
-      ..words = words
-      ..builtIn = false;
+    final deck = widget.deck ?? Deck();
+
+    deck.name = _nameController.text.trim();
+    deck.words = List.from(words);
 
     await DeckService.saveDeck(deck);
 
@@ -73,8 +88,8 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
 
+    print(widget.deck == null);
     return Padding(
       padding: EdgeInsets.only(
         left: 20,
@@ -89,7 +104,7 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Create Deck",
+                widget.deck == null ? "Create Deck" : "Edit Deck",
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
 

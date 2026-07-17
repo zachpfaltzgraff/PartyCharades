@@ -110,7 +110,10 @@ class _HomePageState extends State<HomePage> {
                             childAspectRatio: .85,
                           ),
                           itemBuilder: (context, index) {
-                            return DeckCard(deck: decks[index]);
+                            return DeckCard(
+                              deck: decks[index],
+                              onEdited: loadDecks,
+                            );
                           },
                         ),
                 ),

@@ -1,13 +1,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
+import 'package:party_charades/pages/create_new_deck.dart';
 
 class DeckCard extends StatelessWidget {
   final Deck deck;
 
+  final VoidCallback? onEdited;
+
   const DeckCard({
     super.key,
     required this.deck,
+    this.onEdited,
   });
 
   @override
@@ -41,35 +45,68 @@ class DeckCard extends StatelessWidget {
 
         padding: const EdgeInsets.all(20),
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            const Icon(
-              Icons.style_rounded,
-              size: 42,
-              color: Colors.white,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.style_rounded,
+                  size: 42,
+                  color: Colors.white,
+                ),
+
+                const Spacer(),
+
+                Text(
+                  deck.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                Text(
+                  "${deck.words.length} words",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(.8),
+                  ),
+                ),
+              ],
             ),
 
-            const Spacer(),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(30),
+                  onTap: () async {
+                    final edited = await showModalBottomSheet<bool>(
+                      context: context,
+                      isScrollControlled: true,
+                      useSafeArea: true,
+                      builder: (_) => CreateNewDeck(deck: deck),
+                    );
 
-            Text(
-              deck.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            Text(
-              "${deck.words.length} words",
-              style: TextStyle(
-                color: Colors.white.withOpacity(.8),
-                fontSize: 15,
+                    if (edited == true && context.mounted) {
+                      onEdited?.call();
+                    }
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(6),
+                    child: Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
