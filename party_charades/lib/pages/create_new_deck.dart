@@ -5,10 +5,7 @@ import 'package:party_charades/services/deck_service.dart';
 class CreateNewDeck extends StatefulWidget {
   final Deck? deck;
 
-  const CreateNewDeck({
-    super.key,
-    this.deck,
-  });
+  const CreateNewDeck({super.key, this.deck});
 
   @override
   State<CreateNewDeck> createState() => _CreateNewDeckState();
@@ -131,9 +128,9 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
               widget.deck == null ? "Create Deck" : "Edit Deck",
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-        
+
             const SizedBox(height: 24),
-        
+
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
@@ -147,9 +144,9 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
                 return null;
               },
             ),
-        
+
             const SizedBox(height: 24),
-        
+
             Row(
               children: [
                 Expanded(
@@ -163,10 +160,7 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                FilledButton(
-                  onPressed: addWord,
-                  child: const Icon(Icons.add),
-                ),
+                FilledButton(onPressed: addWord, child: const Icon(Icons.add)),
               ],
             ),
 
@@ -189,9 +183,7 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
                         return Card(
                           elevation: 1,
                           child: ListTile(
-                            leading: CircleAvatar(
-                              child: Text("${index + 1}"),
-                            ),
+                            leading: CircleAvatar(child: Text("${index + 1}")),
                             title: Text(word),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete_outline),
@@ -207,18 +199,14 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
                       },
                     ),
             ),
-        
-            const SizedBox(height: 30),
 
+            const SizedBox(height: 30),
 
             if (widget.deck != null) ...[
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
-                  icon: const Icon(
-                    Icons.delete_outline,
-                    color: Colors.red,
-                  ),
+                  icon: const Icon(Icons.delete_outline, color: Colors.red),
                   label: const Text(
                     "Delete Deck",
                     style: TextStyle(color: Colors.red),
@@ -237,9 +225,7 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
                     ? const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                        ),
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.save),
                 label: const Text("Submit"),

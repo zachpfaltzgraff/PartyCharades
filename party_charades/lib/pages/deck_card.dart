@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/create_new_deck.dart';
@@ -8,11 +7,7 @@ class DeckCard extends StatelessWidget {
 
   final VoidCallback? onEdited;
 
-  const DeckCard({
-    super.key,
-    required this.deck,
-    this.onEdited,
-  });
+  const DeckCard({super.key, required this.deck, this.onEdited});
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +22,7 @@ class DeckCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           gradient: LinearGradient(
-            colors: [
-              colors.primary,
-              colors.secondary,
-            ],
+            colors: [colors.primary, colors.secondary],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -39,7 +31,7 @@ class DeckCard extends StatelessWidget {
               blurRadius: 12,
               offset: const Offset(0, 6),
               color: Colors.black.withOpacity(.15),
-            )
+            ),
           ],
         ),
 
@@ -50,11 +42,7 @@ class DeckCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(
-                  Icons.style_rounded,
-                  size: 42,
-                  color: Colors.white,
-                ),
+                const Icon(Icons.style_rounded, size: 42, color: Colors.white),
 
                 const Spacer(),
 
@@ -73,9 +61,7 @@ class DeckCard extends StatelessWidget {
 
                 Text(
                   "${deck.words.length} words",
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(.8),
-                  ),
+                  style: TextStyle(color: Colors.white.withOpacity(.8)),
                 ),
               ],
             ),
@@ -101,10 +87,7 @@ class DeckCard extends StatelessWidget {
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(6),
-                    child: Icon(
-                      Icons.edit,
-                      color: Colors.white,
-                    ),
+                    child: Icon(Icons.edit, color: Colors.white),
                   ),
                 ),
               ),

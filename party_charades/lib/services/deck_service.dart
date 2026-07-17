@@ -7,12 +7,7 @@ import 'package:party_charades/models/deck.dart';
 import 'database_service.dart';
 
 class DeckService {
-  static const starterDecks = [
-    'animals',
-    'movies',
-    'disney',
-    'food',
-  ];
+  static const starterDecks = ['animals', 'movies', 'disney', 'food'];
 
   static Future<void> loadStarterDecks() async {
     final existing = await DatabaseService.isar.decks.count();
@@ -24,8 +19,7 @@ class DeckService {
     final decks = <Deck>[];
 
     for (final file in starterDecks) {
-      final jsonString =
-          await rootBundle.loadString('assets/decks/$file.json');
+      final jsonString = await rootBundle.loadString('assets/decks/$file.json');
 
       final json = jsonDecode(jsonString);
 

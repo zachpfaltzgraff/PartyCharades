@@ -9,9 +9,6 @@ class DatabaseService {
   static Future<void> initialize() async {
     final dir = await getApplicationDocumentsDirectory();
 
-    isar = await Isar.open(
-      [DeckSchema],
-      directory: dir.path,
-    );
+    isar = await Isar.open([DeckSchema], directory: dir.path);
   }
 }
