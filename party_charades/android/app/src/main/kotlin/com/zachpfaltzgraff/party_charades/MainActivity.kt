@@ -1,4 +1,4 @@
-package com.example.party_charades
+package com.zachpfaltzgraff.party_charades
 
 import io.flutter.embedding.android.FlutterActivity
 
