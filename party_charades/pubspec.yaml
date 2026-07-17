@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
   path_provider: ^2.1.6
 
 dev_dependencies:
@@ -24,3 +25,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/decks/
