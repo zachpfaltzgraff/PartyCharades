@@ -30,8 +30,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           // TODO: create deck
@@ -39,28 +40,39 @@ class _HomePageState extends State<HomePage> {
         icon: const Icon(Icons.add),
         label: const Text("New Deck"),
       ),
-
-      body: RefreshIndicator(
-        onRefresh: loadDecks,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: loading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : GridView.builder(
-                  itemCount: decks.length,
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: .85,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              colors.secondary,
+              colors.primary,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: RefreshIndicator(
+          onRefresh: loadDecks,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: loading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : GridView.builder(
+                    itemCount: decks.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: .85,
+                    ),
+                    itemBuilder: (context, index) {
+                      return DeckCard(deck: decks[index]);
+                    },
                   ),
-                  itemBuilder: (context, index) {
-                    return DeckCard(deck: decks[index]);
-                  },
-                ),
+          ),
         ),
       ),
     );
@@ -78,6 +90,8 @@ class DeckCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return InkWell(
       borderRadius: BorderRadius.circular(24),
       onTap: () {
@@ -88,8 +102,8 @@ class DeckCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           gradient: LinearGradient(
             colors: [
-              Colors.deepPurple.shade400,
-              Colors.purple.shade700,
+              colors.primary,
+              colors.secondary,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
