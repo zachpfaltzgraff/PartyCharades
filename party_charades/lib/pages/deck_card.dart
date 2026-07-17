@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/create_new_deck.dart';
+import 'package:party_charades/pages/gameplay/ready_page.dart';
 
 class DeckCard extends StatelessWidget {
   final Deck deck;
@@ -16,7 +17,12 @@ class DeckCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(24),
       onTap: () {
-        // TODO: open deck
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ReadyPage(deck: deck),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
