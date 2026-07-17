@@ -19,9 +19,7 @@ class DeckCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => ReadyPage(deck: deck),
-          ),
+          MaterialPageRoute(builder: (_) => ReadyPage(deck: deck)),
         );
       },
       child: Container(

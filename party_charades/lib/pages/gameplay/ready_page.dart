@@ -6,10 +6,7 @@ import 'package:party_charades/services/settings_service.dart';
 class ReadyPage extends StatefulWidget {
   final Deck deck;
 
-  const ReadyPage({
-    super.key,
-    required this.deck,
-  });
+  const ReadyPage({super.key, required this.deck});
 
   @override
   State<ReadyPage> createState() => _ReadyPageState();
@@ -41,10 +38,7 @@ class _ReadyPageState extends State<ReadyPage> {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              colors.secondary,
-              colors.primary,
-            ],
+            colors: [colors.secondary, colors.primary],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -57,21 +51,14 @@ class _ReadyPageState extends State<ReadyPage> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                    ),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
 
                 const Spacer(),
 
-                const Icon(
-                  Icons.celebration,
-                  size: 90,
-                  color: Colors.white,
-                ),
+                const Icon(Icons.celebration, size: 90, color: Colors.white),
 
                 const SizedBox(height: 24),
 
@@ -115,19 +102,12 @@ class _ReadyPageState extends State<ReadyPage> {
                   ),
                   child: const Column(
                     children: [
-                      Icon(
-                        Icons.phone_iphone,
-                        color: Colors.white,
-                        size: 40,
-                      ),
+                      Icon(Icons.phone_iphone, color: Colors.white, size: 40),
                       SizedBox(height: 16),
                       Text(
                         "Pass the phone to the player.\nTap START when everyone is ready!",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ],
                   ),

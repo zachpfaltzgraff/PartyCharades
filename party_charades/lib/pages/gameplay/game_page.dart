@@ -8,11 +8,7 @@ class GamePage extends StatefulWidget {
   final Deck deck;
   final int roundLength;
 
-  const GamePage({
-    super.key,
-    required this.deck,
-    required this.roundLength,
-  });
+  const GamePage({super.key, required this.deck, required this.roundLength});
 
   @override
   State<GamePage> createState() => _GamePageState();
@@ -22,10 +18,7 @@ class Answer {
   bool correct;
   String word;
 
-  Answer({
-    required this.correct,
-    required this.word,
-  });
+  Answer({required this.correct, required this.word});
 }
 
 class _GamePageState extends State<GamePage> {
@@ -39,11 +32,9 @@ class _GamePageState extends State<GamePage> {
 
   final List<Answer> answers = [];
 
-  int get correct =>
-    answers.where((answer) => answer.correct).length;
+  int get correct => answers.where((answer) => answer.correct).length;
 
-  int get passed =>
-      answers.where((answer) => !answer.correct).length;
+  int get passed => answers.where((answer) => !answer.correct).length;
 
   @override
   void initState() {
@@ -54,12 +45,9 @@ class _GamePageState extends State<GamePage> {
       DeviceOrientation.landscapeRight,
     ]);
 
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.immersiveSticky,
-    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-    words = List<String>.from(widget.deck.words)
-      ..shuffle();
+    words = List<String>.from(widget.deck.words)..shuffle();
 
     timeRemaining = widget.roundLength;
 
@@ -70,34 +58,27 @@ class _GamePageState extends State<GamePage> {
   void dispose() {
     timer?.cancel();
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.edgeToEdge,
-    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     super.dispose();
   }
 
   void _startTimer() {
-    timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (t) {
-        if (!mounted) return;
+    timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) return;
 
-        if (timeRemaining <= 1) {
-          t.cancel();
-          _finishGame();
-          return;
-        }
+      if (timeRemaining <= 1) {
+        t.cancel();
+        _finishGame();
+        return;
+      }
 
-        setState(() {
-          timeRemaining--;
-        });
-      },
-    );
+      setState(() {
+        timeRemaining--;
+      });
+    });
   }
 
   void _finishGame() {
@@ -109,9 +90,7 @@ class _GamePageState extends State<GamePage> {
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: const Text("Time's Up!"),
-        content: Text(
-          "Correct: $correct \nPassed: $passed",
-        ),
+        content: Text("Correct: $correct \nPassed: $passed"),
         actions: [
           FilledButton(
             onPressed: () {
@@ -119,19 +98,14 @@ class _GamePageState extends State<GamePage> {
               Navigator.pop(context);
             },
             child: const Text("Done"),
-          )
+          ),
         ],
       ),
     );
   }
 
   void _answer(bool wasCorrect) {
-    answers.add(
-      Answer(
-        correct: wasCorrect,
-        word: currentWord,
-      ),
-    );
+    answers.add(Answer(correct: wasCorrect, word: currentWord));
 
     _nextWord();
   }
@@ -150,13 +124,9 @@ class _GamePageState extends State<GamePage> {
   String get currentWord => words[currentIndex];
 
   String get timerText {
-    final minutes = (timeRemaining ~/ 60)
-        .toString()
-        .padLeft(2, '0');
+    final minutes = (timeRemaining ~/ 60).toString().padLeft(2, '0');
 
-    final seconds = (timeRemaining % 60)
-        .toString()
-        .padLeft(2, '0');
+    final seconds = (timeRemaining % 60).toString().padLeft(2, '0');
 
     return "$minutes:$seconds";
   }
@@ -167,19 +137,18 @@ class _GamePageState extends State<GamePage> {
 
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              colors.secondary,
-              colors.primary,
-            ],
+            colors: [colors.secondary, colors.primary],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(28),
+            padding: const EdgeInsets.all(2),
             child: Column(
               children: [
                 Text(
@@ -191,53 +160,74 @@ class _GamePageState extends State<GamePage> {
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 10),
 
-                Dismissible(
-                  key: ValueKey("$currentWord-$currentIndex"),
-                  direction: DismissDirection.horizontal,
-                  onDismissed: (direction) {
-                    if (direction == DismissDirection.startToEnd) {
-                      _answer(true);
-                    } else {
-                      _answer(false);
-                    }
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white
-                    ),
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      currentWord,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 42,
-                        fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Center(
+                    child: Dismissible(
+                      key: ValueKey("$currentWord-$currentIndex"),
+                      direction: DismissDirection.horizontal,
+                      onDismissed: (direction) {
+                        if (direction == DismissDirection.startToEnd) {
+                          _answer(true);
+                        } else {
+                          _answer(false);
+                        }
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(32),
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                              color: Colors.black.withOpacity(.25),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(30),
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  currentWord,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: const [
+                                Text(
+                                  "← Pass",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                Text(
+                                  "Correct →",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "← Pass",
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(width: 120,),
-                    const Text(
-                      "Correct →",
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),

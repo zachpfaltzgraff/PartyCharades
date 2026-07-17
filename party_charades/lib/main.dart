@@ -13,9 +13,7 @@ Future<void> main() async {
   await DatabaseService.initialize();
   await DeckService.loadStarterDecks();
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   runApp(const MyApp());
 }
