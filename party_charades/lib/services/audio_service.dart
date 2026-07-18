@@ -6,19 +6,14 @@ class AudioService {
 
   Future<void> playCorrect() async {
     await audioPlayer.stop();
-    await audioPlayer.play(
-      AssetSource('sounds/correct.mp3'),
-    );
+    await audioPlayer.play(AssetSource('sounds/correct.mp3'));
 
     HapticFeedback.mediumImpact();
   }
 
-
   Future<void> playWrong() async {
     await audioPlayer.stop();
-    await audioPlayer.play(
-      AssetSource('sounds/wrong.mp3'),
-    );
+    await audioPlayer.play(AssetSource('sounds/wrong.mp3'));
 
     HapticFeedback.heavyImpact();
   }

@@ -44,7 +44,6 @@ class _GamePageState extends State<GamePage> {
     super.initState();
 
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
 
@@ -74,6 +73,7 @@ class _GamePageState extends State<GamePage> {
 
       if (timeRemaining <= 1) {
         t.cancel();
+        urgencyTimer?.cancel();
         _finishGame();
         return;
       }
@@ -81,6 +81,30 @@ class _GamePageState extends State<GamePage> {
       setState(() {
         timeRemaining--;
       });
+
+      _handleUrgency();
+    });
+  }
+
+  void _handleUrgency() {
+    if (timeRemaining > 10) {
+      return;
+    }
+
+    urgencyTimer?.cancel();
+
+    int interval;
+
+    if (timeRemaining <= 3) {
+      interval = 150;
+    } else if (timeRemaining <= 6) {
+      interval = 350;
+    } else {
+      interval = 700;
+    }
+
+    urgencyTimer = Timer.periodic(Duration(milliseconds: interval), (_) {
+      HapticFeedback.lightImpact();
     });
   }
 
@@ -114,12 +138,7 @@ class _GamePageState extends State<GamePage> {
       AudioService().playWrong();
     }
 
-    answers.add(
-      Answer(
-        correct: wasCorrect,
-        word: currentWord,
-      ),
-    );
+    answers.add(Answer(correct: wasCorrect, word: currentWord));
 
     _nextWord();
   }
