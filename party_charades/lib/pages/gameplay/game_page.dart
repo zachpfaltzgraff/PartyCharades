@@ -120,30 +120,20 @@ class _GamePageState extends State<GamePage>
 
   void _startTiltDetection() {
     accelerometerSubscription = accelerometerEventStream().listen((event) {
-      if (!canAnswer || showCountdown) return;
+      if (showCountdown) return;
 
-      /*
-        Device held landscape right:
-        
-        X axis:
-        - positive = tilted one direction
-        - negative = tilted opposite direction
+      // Reset once phone is back near center.
+      if (!canAnswer) {
+        print(event.z);
+        if (event.z > -6 && event.z < 6) {
+          canAnswer = true;
+        }
+        return;
+      }
 
-        Y axis:
-        - positive = top going down
-        - negative = lifting up
-      */
-
-      // Phone tilted upward = correct
-      print(
-        "z=${event.z.toStringAsFixed(2)}",
-      );
-      // 9 is straight up and down
-      // 0 is straight up
-      // 0 is also straight down
-      if (event.z > 6) {
+      if (event.z > 6.25) {
         _answer(true);
-      } else if (event.z < -6) {
+      } else if (event.z < -6.25) {
         _answer(false);
       }
     });
@@ -231,10 +221,6 @@ class _GamePageState extends State<GamePage>
     answers.add(Answer(correct: wasCorrect, word: currentWord));
 
     _nextWord();
-
-    Future.delayed(const Duration(milliseconds: 600), () {
-      canAnswer = true;
-    });
   }
 
   void _nextWord() {
