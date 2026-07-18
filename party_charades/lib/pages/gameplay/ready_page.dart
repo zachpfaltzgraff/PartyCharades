@@ -78,7 +78,7 @@ class _ReadyPageState extends State<ReadyPage> {
                   "${widget.deck.words.length} words",
                   style: TextStyle(
                     fontSize: 20,
-                    color: Colors.white.withOpacity(.9),
+                    color: Colors.white.withValues(alpha: .9),
                   ),
                 ),
 
@@ -88,7 +88,7 @@ class _ReadyPageState extends State<ReadyPage> {
                   "$roundLength second round",
                   style: TextStyle(
                     fontSize: 20,
-                    color: Colors.white.withOpacity(.9),
+                    color: Colors.white.withValues(alpha: .9),
                   ),
                 ),
 
@@ -97,7 +97,7 @@ class _ReadyPageState extends State<ReadyPage> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(.15),
+                    color: Colors.white.withValues(alpha: .15),
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: const Column(

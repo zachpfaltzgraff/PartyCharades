@@ -34,7 +34,7 @@ class DeckCard extends StatelessWidget {
             BoxShadow(
               blurRadius: 12,
               offset: const Offset(0, 6),
-              color: Colors.black.withOpacity(.15),
+              color: Colors.black.withValues(alpha: .15),
             ),
           ],
         ),
@@ -65,7 +65,7 @@ class DeckCard extends StatelessWidget {
 
                 Text(
                   "${deck.words.length} words",
-                  style: TextStyle(color: Colors.white.withOpacity(.8)),
+                  style: TextStyle(color: Colors.white.withValues(alpha: .8)),
                 ),
               ],
             ),

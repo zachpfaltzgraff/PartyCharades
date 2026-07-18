@@ -275,7 +275,7 @@ class _GamePageState extends State<GamePage> {
           BoxShadow(
             blurRadius: 20,
             offset: const Offset(0, 10),
-            color: Colors.black.withOpacity(.25),
+            color: Colors.black.withValues(alpha: .25),
           ),
         ],
       ),

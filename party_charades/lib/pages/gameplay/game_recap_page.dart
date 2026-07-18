@@ -123,7 +123,7 @@ class _GameRecapPageState extends State<GameRecapPage> {
 
                         itemCount: widget.answers.length,
 
-                        separatorBuilder: (_, __) => const Divider(),
+                        separatorBuilder: (_, _) => const Divider(),
 
                         itemBuilder: (context, index) {
                           final answer = widget.answers[index];
