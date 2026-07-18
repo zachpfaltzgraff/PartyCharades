@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:party_charades/pages/settings/instruction_row.dart';
+import 'package:party_charades/services/audio_service.dart';
 import 'package:party_charades/services/settings_service.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -47,6 +48,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> updateAudio(bool value) async {
+    AudioService().playHapticCorrect();
+
     setState(() {
       audioEnabled = value;
     });
@@ -55,6 +58,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> updateHaptic(bool value) async {
+    AudioService().playHapticCorrect();
+
     setState(() {
       hapticEnabled = value;
     });
@@ -131,6 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         divisions: 15,
                         label: "$roundLength sec",
                         onChanged: (value) {
+                          AudioService().playHapticCorrect();
                           updateRoundLength(value.round());
                         },
                       ),

@@ -3,6 +3,7 @@ import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/create_new_deck.dart';
 import 'package:party_charades/pages/deck_card.dart';
 import 'package:party_charades/pages/settings/settings_page.dart';
+import 'package:party_charades/services/audio_service.dart';
 import 'package:party_charades/services/deck_service.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -79,6 +80,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
             onPressed: () {
+              AudioService().playHapticCorrect();
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const SettingsPage()),
@@ -89,6 +91,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
+          AudioService().playHapticCorrect();
           final created = await showModalBottomSheet<bool>(
             context: context,
             isScrollControlled: true,

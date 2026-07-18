@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/create_new_deck.dart';
 import 'package:party_charades/pages/gameplay/ready_page.dart';
+import 'package:party_charades/services/audio_service.dart';
 import 'package:party_charades/services/deck_import_export_service.dart';
 
 class DeckCard extends StatelessWidget {
@@ -18,6 +19,7 @@ class DeckCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(24),
       onTap: () {
+        AudioService().playHapticCorrect();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => ReadyPage(deck: deck)),
@@ -79,6 +81,7 @@ class DeckCard extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(30),
                   onTap: () async {
+                    AudioService().playHapticCorrect();
                     final edited = await showModalBottomSheet<bool>(
                       context: context,
                       isScrollControlled: true,
@@ -108,6 +111,7 @@ class DeckCard extends StatelessWidget {
                     return InkWell(
                       borderRadius: BorderRadius.circular(30),
                       onTap: () async {
+                        AudioService().playHapticCorrect();
                         final box = iconContext.findRenderObject() as RenderBox?;
                         final origin = box != null
                             ? box.localToGlobal(Offset.zero) & box.size

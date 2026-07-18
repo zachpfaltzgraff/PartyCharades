@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
+import 'package:party_charades/services/audio_service.dart';
 import 'package:party_charades/services/deck_import_export_service.dart';
 import 'package:party_charades/services/deck_service.dart';
 
@@ -40,6 +41,7 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
   }
 
   void addWord() {
+    AudioService().playHapticCorrect();
     final word = _wordController.text.trim();
 
     if (word.isEmpty) return;
@@ -63,6 +65,8 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
       return;
     }
 
+    AudioService().playHapticCorrect();
+
     setState(() {
       saving = true;
     });
@@ -80,6 +84,8 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
   }
 
   Future<void> _deleteDeck() async {
+    AudioService().playHapticCorrect();
+
     final delete = await showDialog<bool>(
       context: context,
       builder: (context) {
@@ -112,6 +118,8 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
   }
 
   Future<void> _importDeck(BuildContext context) async {
+    AudioService().playHapticCorrect();
+
     try {
       final deck = await DeckImportExportService.importDeck();
 

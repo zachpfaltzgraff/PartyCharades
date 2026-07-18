@@ -95,7 +95,7 @@ class _GamePageState extends State<GamePage>
   void _startCountdown() {
     HapticFeedback.mediumImpact();
 
-    countdownTimer = Timer.periodic(const Duration(milliseconds: 1200), (t) {
+    countdownTimer = Timer.periodic(const Duration(milliseconds: 1250), (t) {
       if (!mounted) return;
 
       if (countdownValue <= 1) {
@@ -135,9 +135,15 @@ class _GamePageState extends State<GamePage>
       */
 
       // Phone tilted upward = correct
-      if (event.y < -6) {
+      print(
+        "z=${event.z.toStringAsFixed(2)}",
+      );
+      // 9 is straight up and down
+      // 0 is straight up
+      // 0 is also straight down
+      if (event.z > 6) {
         _answer(true);
-      } else if (event.y > 6) {
+      } else if (event.z < -6) {
         _answer(false);
       }
     });
