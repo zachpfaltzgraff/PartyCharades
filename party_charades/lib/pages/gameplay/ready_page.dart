@@ -55,13 +55,9 @@ class _ReadyPageState extends State<ReadyPage> {
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-
                 const Spacer(),
-
                 const Icon(Icons.celebration, size: 90, color: Colors.white),
-
                 const SizedBox(height: 24),
-
                 Text(
                   widget.deck.name,
                   textAlign: TextAlign.center,
@@ -71,9 +67,7 @@ class _ReadyPageState extends State<ReadyPage> {
                     color: Colors.white,
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
                 Text(
                   "${widget.deck.words.length} words",
                   style: TextStyle(
@@ -81,9 +75,7 @@ class _ReadyPageState extends State<ReadyPage> {
                     color: Colors.white.withValues(alpha: .9),
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
                 Text(
                   "$roundLength second round",
                   style: TextStyle(
@@ -91,9 +83,7 @@ class _ReadyPageState extends State<ReadyPage> {
                     color: Colors.white.withValues(alpha: .9),
                   ),
                 ),
-
                 const SizedBox(height: 40),
-
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -112,9 +102,7 @@ class _ReadyPageState extends State<ReadyPage> {
                     ],
                   ),
                 ),
-
                 const Spacer(),
-
                 SizedBox(
                   width: double.infinity,
                   height: 60,
