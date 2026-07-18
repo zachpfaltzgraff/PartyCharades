@@ -199,7 +199,10 @@ class _GameRecapPageState extends State<GameRecapPage> {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: const Text("Back to Decks"),
+                              child: const Text(
+                                "Back to Decks",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
                         ],

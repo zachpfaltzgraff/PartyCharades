@@ -10,6 +10,9 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   int roundLength = SettingsService.defaultRoundLength;
+  bool audioEnabled = SettingsService.defaultAudio;
+  bool hapticEnabled = SettingsService.defaultHaptic;
+  bool loading = true;
 
   @override
   void initState() {
@@ -18,14 +21,23 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> load() async {
-    roundLength = await SettingsService.getRoundLength();
+    final length = await SettingsService.getRoundLength();
 
-    if (mounted) {
-      setState(() {});
-    }
+    final audio = await SettingsService.getAudio();
+
+    final haptic = await SettingsService.getHaptic();
+
+    if (!mounted) return;
+
+    setState(() {
+      roundLength = length;
+      audioEnabled = audio;
+      hapticEnabled = haptic;
+      loading = false;
+    });
   }
 
-  Future<void> save(int value) async {
+  Future<void> updateRoundLength(int value) async {
     setState(() {
       roundLength = value;
     });
@@ -33,25 +45,128 @@ class _SettingsPageState extends State<SettingsPage> {
     await SettingsService.setRoundLength(value);
   }
 
+  Future<void> updateAudio(bool value) async {
+    setState(() {
+      audioEnabled = value;
+    });
+
+    await SettingsService.setAudio(value);
+  }
+
+  Future<void> updateHaptic(bool value) async {
+    setState(() {
+      hapticEnabled = value;
+    });
+
+    await SettingsService.setHaptic(value);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text("Settings")),
+
       body: ListView(
+        padding: const EdgeInsets.all(16),
+
         children: [
-          ListTile(
-            title: const Text("Round Length"),
-            subtitle: Text("$roundLength seconds"),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+                  Row(
+                    children: const [
+                      Icon(Icons.timer),
+
+                      SizedBox(width: 12),
+
+                      Text(
+                        "Round Length",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "$roundLength seconds",
+                    style: TextStyle(
+                      color: colors.primary,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  Slider(
+                    value: roundLength.toDouble(),
+
+                    min: 30,
+
+                    max: 180,
+
+                    divisions: 15,
+
+                    label: "$roundLength sec",
+
+                    onChanged: (value) {
+                      updateRoundLength(value.round());
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
-          Slider(
-            value: roundLength.toDouble(),
-            min: 30,
-            max: 180,
-            divisions: 30,
-            label: "$roundLength sec",
-            onChanged: (value) {
-              save(value.round());
-            },
+
+          const SizedBox(height: 16),
+
+          Card(
+            child: Column(
+              children: [
+                SwitchListTile(
+                  secondary: const Icon(Icons.volume_up),
+
+                  title: const Text("Sound Effects"),
+
+                  subtitle: const Text(
+                    "Play sounds for correct and passed words",
+                  ),
+
+                  value: audioEnabled,
+
+                  onChanged: updateAudio,
+                ),
+
+                const Divider(height: 1),
+
+                SwitchListTile(
+                  secondary: const Icon(Icons.vibration),
+
+                  title: const Text("Vibration"),
+
+                  subtitle: const Text(
+                    "Enable haptic feedback during gameplay",
+                  ),
+
+                  value: hapticEnabled,
+
+                  onChanged: updateHaptic,
+                ),
+              ],
+            ),
           ),
         ],
       ),
