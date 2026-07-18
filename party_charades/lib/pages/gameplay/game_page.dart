@@ -374,6 +374,7 @@ class _GamePageState extends State<GamePage>
                                       setState(() {
                                         dragX = 0;
                                         isAnimating = false;
+                                        canAnswer = true;
                                       });
                                     },
                                   );
