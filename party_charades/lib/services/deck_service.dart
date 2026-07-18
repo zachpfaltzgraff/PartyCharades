@@ -25,7 +25,6 @@ class DeckService {
 
       final deck = Deck()
         ..name = json["name"]
-        ..builtIn = true
         ..words = List<String>.from(json["words"]);
 
       decks.add(deck);

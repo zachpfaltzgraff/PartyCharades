@@ -6,6 +6,5 @@ part 'deck.g.dart';
 class Deck {
   Id id = Isar.autoIncrement;
   late String name;
-  late bool builtIn;
   late List<String> words;
 }
