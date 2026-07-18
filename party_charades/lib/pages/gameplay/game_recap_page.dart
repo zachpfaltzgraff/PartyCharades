@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
-import 'package:party_charades/pages/gameplay/game_page.dart';
+import 'package:party_charades/models/answer.dart';
 
 class GameRecapPage extends StatefulWidget {
   final List<Answer> answers;

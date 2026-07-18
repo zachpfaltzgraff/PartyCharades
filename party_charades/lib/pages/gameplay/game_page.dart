@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:party_charades/models/answer.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/gameplay/game_recap_page.dart';
 import 'package:party_charades/services/audio_service.dart';
@@ -14,13 +15,6 @@ class GamePage extends StatefulWidget {
 
   @override
   State<GamePage> createState() => _GamePageState();
-}
-
-class Answer {
-  bool correct;
-  String word;
-
-  Answer({required this.correct, required this.word});
 }
 
 class _GamePageState extends State<GamePage> {
