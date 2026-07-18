@@ -211,18 +211,18 @@ class _SettingsPageState extends State<SettingsPage> {
         const SizedBox(height: 16),
 
         InstructionRow(
-          icon: Icons.keyboard_arrow_up_rounded,
+          icon: Icons.keyboard_arrow_down_rounded,
           iconColor: Colors.green,
-          title: "Tilt Up",
+          title: "Tilt Down",
           description: "You guessed correctly!",
         ),
 
         const SizedBox(height: 16),
 
         InstructionRow(
-          icon: Icons.keyboard_arrow_down_rounded,
+          icon: Icons.keyboard_arrow_up_rounded,
           iconColor: Colors.red,
-          title: "Tilt Down",
+          title: "Tilt Up",
           description: "Skip to the next word.",
         ),
 

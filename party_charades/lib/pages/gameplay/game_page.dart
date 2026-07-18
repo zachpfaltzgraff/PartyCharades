@@ -124,7 +124,6 @@ class _GamePageState extends State<GamePage>
 
       // Reset once phone is back near center.
       if (!canAnswer) {
-        print(event.z);
         if (event.z > -6 && event.z < 6) {
           canAnswer = true;
         }
@@ -132,9 +131,9 @@ class _GamePageState extends State<GamePage>
       }
 
       if (event.z > 6.25) {
-        _answer(true);
-      } else if (event.z < -6.25) {
         _answer(false);
+      } else if (event.z < -6.25) {
+        _answer(true);
       }
     });
   }
