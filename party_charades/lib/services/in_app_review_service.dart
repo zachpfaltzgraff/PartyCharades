@@ -11,6 +11,7 @@ class InAppReviewService {
     final hasShown = prefs.getBool('hasShownReview') ?? false;
     if (hasShown) return;
 
+    print('asking');
     if (await inAppReview.isAvailable()) {
       await inAppReview.requestReview();
     } else {
