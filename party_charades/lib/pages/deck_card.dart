@@ -103,15 +103,27 @@ class DeckCard extends StatelessWidget {
               right: 0,
               child: Material(
                 color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(30),
-                  onTap: () async {
-                    await DeckImportExportService.shareDeck(deck);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(6),
-                    child: Icon(Icons.file_upload_outlined, color: Colors.white),
-                  ),
+                child: Builder(
+                  builder: (iconContext) {
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(30),
+                      onTap: () async {
+                        final box = iconContext.findRenderObject() as RenderBox?;
+                        final origin = box != null
+                            ? box.localToGlobal(Offset.zero) & box.size
+                            : null;
+                    
+                        await DeckImportExportService.shareDeck(
+                          deck,
+                          sharePositionOrigin: origin,
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(6),
+                        child: Icon(Icons.file_upload_outlined, color: Colors.white),
+                      ),
+                    );
+                  }
                 ),
               ),
             ),

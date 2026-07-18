@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:party_charades/models/deck.dart';
@@ -18,9 +19,7 @@ class DeckImportException implements Exception {
 }
 
 class DeckImportExportService {
-  /// Writes [deck] out as a formatted .json file and opens the native
-  /// share sheet (Messages, Email, AirDrop, Google Drive, etc).
-  static Future<void> shareDeck(Deck deck) async {
+  static Future<void> shareDeck(Deck deck, {Rect? sharePositionOrigin}) async {
     final jsonString = const JsonEncoder.withIndent('  ').convert({
       'name': deck.name,
       'words': deck.words,
@@ -35,6 +34,7 @@ class DeckImportExportService {
       [XFile(file.path, mimeType: 'application/json')],
       subject: '${deck.name} — Party Charades Deck',
       text: 'Check out this word list for Party Charades!',
+      sharePositionOrigin: sharePositionOrigin,
     );
   }
 

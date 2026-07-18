@@ -115,13 +115,12 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
     try {
       final deck = await DeckImportExportService.importDeck();
 
-      setState(() {
-        DeckService.saveDeck(deck);
-      });
+      await DeckService.saveDeck(deck);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Imported "${deck.name}" (${deck.words.length} words)')),
       );
+      Navigator.pop(context, true);
     } on DeckImportException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message)),
