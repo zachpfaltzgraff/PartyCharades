@@ -5,6 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:party_charades/models/answer.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/gameplay/game_page.dart';
+import 'package:party_charades/services/in_app_review_service.dart';
 
 class _RecapPalette {
   final Color correct;
@@ -95,6 +96,8 @@ class _GameRecapPageState extends State<GameRecapPage>
 
     _entranceController.forward();
     _confettiController.play();
+
+    InAppReviewService().requestReview();
 
     bannerAd = BannerAd(
       adUnitId: 'ca-app-pub-5936113316990256/5545903895',
