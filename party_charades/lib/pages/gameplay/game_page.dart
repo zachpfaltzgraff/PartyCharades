@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:party_charades/models/deck.dart';
+import 'package:party_charades/pages/gameplay/game_recap_page.dart';
 import 'package:party_charades/services/audio_service.dart';
 
 class GamePage extends StatefulWidget {
@@ -43,9 +43,7 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight]);
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
@@ -111,22 +109,13 @@ class _GamePageState extends State<GamePage> {
   void _finishGame() {
     timer?.cancel();
 
-    // Results page comes in Part 2
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: const Text("Time's Up!"),
-        content: Text("Correct: $correct \nPassed: $passed"),
-        actions: [
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text("Done"),
-          ),
-        ],
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => GameRecapPage(
+          answers: answers,
+          deckName: widget.deck.name,
+        ),
       ),
     );
   }
