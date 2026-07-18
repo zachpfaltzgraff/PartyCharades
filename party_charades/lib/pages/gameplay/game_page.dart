@@ -6,6 +6,7 @@ import 'package:party_charades/models/answer.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/gameplay/game_recap_page.dart';
 import 'package:party_charades/services/audio_service.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 class GamePage extends StatefulWidget {
   final Deck deck;
@@ -33,6 +34,9 @@ class _GamePageState extends State<GamePage> {
 
   Timer? urgencyTimer;
 
+  StreamSubscription<AccelerometerEvent>? accelerometerSubscription;
+  bool canAnswer = true;
+
   @override
   void initState() {
     super.initState();
@@ -46,17 +50,45 @@ class _GamePageState extends State<GamePage> {
     timeRemaining = widget.roundLength;
 
     _startTimer();
+    _startTiltDetection();
   }
 
   @override
   void dispose() {
     timer?.cancel();
+    urgencyTimer?.cancel();
+    accelerometerSubscription?.cancel();
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     super.dispose();
+  }
+
+  void _startTiltDetection() {
+    accelerometerSubscription = accelerometerEventStream().listen((event) {
+      if (!canAnswer) return;
+
+      /*
+        Device held landscape right:
+        
+        X axis:
+        - positive = tilted one direction
+        - negative = tilted opposite direction
+
+        Y axis:
+        - positive = top going down
+        - negative = lifting up
+      */
+
+      // Phone tilted upward = correct
+      if (event.y < -6) {
+        _answer(true);
+      } else if (event.y > 6) {
+        _answer(false);
+      }
+    });
   }
 
   void _startTimer() {
@@ -117,15 +149,25 @@ class _GamePageState extends State<GamePage> {
   }
 
   void _answer(bool wasCorrect) {
+    if (!canAnswer) return;
+
+    canAnswer = false;
+
     if (wasCorrect) {
+      HapticFeedback.mediumImpact();
       AudioService().playCorrect();
     } else {
+      HapticFeedback.heavyImpact();
       AudioService().playWrong();
     }
 
     answers.add(Answer(correct: wasCorrect, word: currentWord));
 
     _nextWord();
+
+    Future.delayed(const Duration(milliseconds: 600), () {
+      canAnswer = true;
+    });
   }
 
   void _nextWord() {
@@ -196,12 +238,16 @@ class _GamePageState extends State<GamePage> {
                         // Current draggable card
                         GestureDetector(
                           onHorizontalDragUpdate: (details) {
+                            if (!canAnswer) return;
+
                             setState(() {
                               dragX += details.delta.dx;
                             });
                           },
 
                           onHorizontalDragEnd: (_) {
+                            if (!canAnswer) return;
+                            
                             if (dragX.abs() > 120) {
                               final correct = dragX > 0;
 

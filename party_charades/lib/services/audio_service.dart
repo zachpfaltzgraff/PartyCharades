@@ -7,7 +7,7 @@ class AudioService {
 
   Future<void> playCorrect() async {
     playHapticCorrect();
-    if(!await SettingsService.getAudio()) return;
+    if (!await SettingsService.getAudio()) return;
 
     await audioPlayer.stop();
     await audioPlayer.play(AssetSource('sounds/correct.mp3'));
@@ -15,7 +15,7 @@ class AudioService {
 
   Future<void> playWrong() async {
     playHapticWrong();
-    if(!await SettingsService.getAudio()) return;
+    if (!await SettingsService.getAudio()) return;
 
     await audioPlayer.stop();
     await audioPlayer.play(AssetSource('sounds/wrong.mp3'));
@@ -24,13 +24,13 @@ class AudioService {
   }
 
   Future<void> playHapticCorrect() async {
-    if(!await SettingsService.getHaptic()) return;
+    if (!await SettingsService.getHaptic()) return;
 
     HapticFeedback.mediumImpact();
   }
 
   Future<void> playHapticWrong() async {
-    if(!await SettingsService.getHaptic()) return;
+    if (!await SettingsService.getHaptic()) return;
 
     HapticFeedback.heavyImpact();
   }
