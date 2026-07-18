@@ -43,96 +43,103 @@ class _ReadyPageState extends State<ReadyPage> {
             end: Alignment.bottomRight,
           ),
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(28),
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                const Spacer(),
-                const Icon(Icons.celebration, size: 90, color: Colors.white),
-                const SizedBox(height: 24),
-                Text(
-                  widget.deck.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 34,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  "${widget.deck.words.length} words",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white.withValues(alpha: .9),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "$roundLength second round",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white.withValues(alpha: .9),
-                  ),
-                ),
-                const SizedBox(height: 40),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .15),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: const Column(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+            child: IntrinsicHeight(
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(28),
+                  child: Column(
                     children: [
-                      Icon(Icons.phone_iphone, color: Colors.white, size: 40),
-                      SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      const Spacer(),
+                      const Icon(Icons.celebration, size: 90, color: Colors.white),
+                      const SizedBox(height: 24),
                       Text(
-                        "Pass the phone to the player.\nTap START when everyone is ready!",
+                        widget.deck.name,
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        style: const TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "${widget.deck.words.length} words",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white.withValues(alpha: .9),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "$roundLength second round",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white.withValues(alpha: .9),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: .15),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: const Column(
+                          children: [
+                            Icon(Icons.phone_iphone, color: Colors.white, size: 40),
+                            SizedBox(height: 16),
+                            Text(
+                              "Pass the phone to the player.\nTap START when everyone is ready!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 60,
+                        child: FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: colors.primary,
+                          ),
+                          icon: const Icon(Icons.play_arrow),
+                          label: const Text(
+                            "START",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => GamePage(
+                                  deck: widget.deck,
+                                  roundLength: roundLength,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: colors.primary,
-                    ),
-                    icon: const Icon(Icons.play_arrow),
-                    label: const Text(
-                      "START",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => GamePage(
-                            deck: widget.deck,
-                            roundLength: roundLength,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
