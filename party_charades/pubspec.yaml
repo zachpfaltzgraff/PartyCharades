@@ -35,10 +35,10 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/logo_clear.png"
+  image_path: "assets/images/logo.png"
   background_color: "#2196F3"
   adaptive_icon_background: "#2196F3"
-  adaptive_icon_foreground: "assets/images/logo_clear.png"
+  adaptive_icon_foreground: "assets/images/logo.png"
 
 flutter_native_splash:
   color: "#2196F3"
