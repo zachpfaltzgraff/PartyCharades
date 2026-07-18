@@ -71,19 +71,16 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      
+
       appBar: AppBar(
-        title: const Text("Settings", style: TextStyle(color: Colors.white),),
+        title: const Text("Settings", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         leading: GestureDetector(
           onTap: () {
             Navigator.of(context).pop();
           },
-          child: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
-          ),
+          child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
         ),
       ),
       body: Container(

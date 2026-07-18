@@ -47,6 +47,12 @@ class _GamePageState extends State<GamePage>
 
   bool get showingSwipeHint => dragX.abs() > 80;
 
+  // Pre-round 3-2-1 countdown state. Nothing in the round (timer, tilt
+  // detection, swipes) is active until this finishes.
+  bool showCountdown = true;
+  int countdownValue = 3;
+  Timer? countdownTimer;
+
   // Visual pulse synced to the haptic urgency feedback in the final
   // seconds of the round. Purely cosmetic — does not affect timing logic.
   late final AnimationController _pulseController;
@@ -72,23 +78,49 @@ class _GamePageState extends State<GamePage>
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    _startTimer();
-    _startTiltDetection();
+    _startCountdown();
   }
 
   @override
   void dispose() {
     timer?.cancel();
     urgencyTimer?.cancel();
+    countdownTimer?.cancel();
     accelerometerSubscription?.cancel();
     _pulseController.dispose();
 
     super.dispose();
   }
 
+  void _startCountdown() {
+    HapticFeedback.mediumImpact();
+
+    countdownTimer = Timer.periodic(const Duration(milliseconds: 1200), (t) {
+      if (!mounted) return;
+
+      if (countdownValue <= 1) {
+        t.cancel();
+
+        setState(() {
+          showCountdown = false;
+        });
+
+        _startTimer();
+        _startTiltDetection();
+        return;
+      }
+
+      setState(() {
+        countdownValue--;
+      });
+
+      HapticFeedback.mediumImpact();
+    });
+  }
+
   void _startTiltDetection() {
     accelerometerSubscription = accelerometerEventStream().listen((event) {
-      if (!canAnswer) return;
+      if (!canAnswer || showCountdown) return;
 
       /*
         Device held landscape right:
@@ -178,7 +210,7 @@ class _GamePageState extends State<GamePage>
   }
 
   void _answer(bool wasCorrect) {
-    if (!canAnswer) return;
+    if (!canAnswer || showCountdown) return;
 
     canAnswer = false;
 
@@ -226,6 +258,8 @@ class _GamePageState extends State<GamePage>
     return _kNormalTimerColor;
   }
 
+  String get _countdownText => countdownValue > 0 ? '$countdownValue' : 'GO!';
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -268,16 +302,14 @@ class _GamePageState extends State<GamePage>
                         Stack(
                           alignment: Alignment.center,
                           children: [
-                            if (showingSwipeHint)
+                            if (showingSwipeHint && !showCountdown)
                               Center(
                                 child: AnimatedScale(
                                   duration: const Duration(milliseconds: 120),
                                   scale: (0.9 + (dragX.abs() / 120) * 0.3)
                                       .clamp(0.9, 1.2),
                                   child: AnimatedOpacity(
-                                    duration: const Duration(
-                                      milliseconds: 150,
-                                    ),
+                                    duration: const Duration(milliseconds: 150),
                                     opacity: 1,
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
@@ -292,9 +324,7 @@ class _GamePageState extends State<GamePage>
                                             : _kPassedColor.withValues(
                                                 alpha: .92,
                                               ),
-                                        borderRadius: BorderRadius.circular(
-                                          30,
-                                        ),
+                                        borderRadius: BorderRadius.circular(30),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.black.withValues(
@@ -320,7 +350,7 @@ class _GamePageState extends State<GamePage>
                               ),
                             GestureDetector(
                               onHorizontalDragUpdate: (details) {
-                                if (!canAnswer) return;
+                                if (!canAnswer || showCountdown) return;
 
                                 setState(() {
                                   dragX += details.delta.dx;
@@ -328,7 +358,7 @@ class _GamePageState extends State<GamePage>
                               },
 
                               onHorizontalDragEnd: (_) {
-                                if (!canAnswer) return;
+                                if (!canAnswer || showCountdown) return;
 
                                 if (dragX.abs() > 120) {
                                   final correct = dragX > 0;
@@ -384,6 +414,8 @@ class _GamePageState extends State<GamePage>
                                 child: _wordCard(currentWord),
                               ),
                             ),
+
+                            if (showCountdown) _countdownOverlay(),
                           ],
                         ),
                       ],
@@ -391,6 +423,42 @@ class _GamePageState extends State<GamePage>
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _countdownOverlay() {
+    return Positioned.fill(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: .55),
+          borderRadius: BorderRadius.circular(32),
+        ),
+        child: Center(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            transitionBuilder: (child, animation) => ScaleTransition(
+              scale: animation,
+              child: FadeTransition(opacity: animation, child: child),
+            ),
+            child: Text(
+              _countdownText,
+              key: ValueKey(_countdownText),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: countdownValue > 0 ? 120 : 96,
+                fontWeight: FontWeight.w900,
+                shadows: const [
+                  Shadow(
+                    color: Colors.black38,
+                    blurRadius: 20,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

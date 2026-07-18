@@ -94,8 +94,7 @@ class _ReadyPageState extends State<ReadyPage>
                       padding: const EdgeInsets.symmetric(horizontal: 28),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          minHeight:
-                              MediaQuery.of(context).size.height * 0.7,
+                          minHeight: MediaQuery.of(context).size.height * 0.7,
                         ),
                         child: IntrinsicHeight(
                           child: Column(
