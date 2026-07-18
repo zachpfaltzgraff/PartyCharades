@@ -70,105 +70,105 @@ class _SettingsPageState extends State<SettingsPage> {
     final colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
-
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-
-        children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  Row(
-                    children: const [
-                      Icon(Icons.timer),
-
-                      SizedBox(width: 12),
-
+      extendBodyBehindAppBar: true,
+      
+      appBar: AppBar(
+        title: const Text("Settings", style: TextStyle(color: Colors.white),),
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [colors.secondary, colors.primary],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: const [
+                          Icon(Icons.timer),
+                          SizedBox(width: 12),
+                          Text(
+                            "Round Length",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
                       Text(
-                        "Round Length",
+                        "$roundLength seconds",
                         style: TextStyle(
-                          fontSize: 18,
+                          color: colors.primary,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      Slider(
+                        value: roundLength.toDouble(),
+                        min: 30,
+                        max: 180,
+                        divisions: 15,
+                        label: "$roundLength sec",
+                        onChanged: (value) {
+                          updateRoundLength(value.round());
+                        },
+                      ),
                     ],
                   ),
-
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "$roundLength seconds",
-                    style: TextStyle(
-                      color: colors.primary,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  Slider(
-                    value: roundLength.toDouble(),
-
-                    min: 30,
-
-                    max: 180,
-
-                    divisions: 15,
-
-                    label: "$roundLength sec",
-
-                    onChanged: (value) {
-                      updateRoundLength(value.round());
-                    },
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          Card(
-            child: Column(
-              children: [
-                SwitchListTile(
-                  secondary: const Icon(Icons.volume_up),
-
-                  title: const Text("Sound Effects"),
-
-                  subtitle: const Text(
-                    "Play sounds for correct and passed words",
-                  ),
-
-                  value: audioEnabled,
-
-                  onChanged: updateAudio,
+              const SizedBox(height: 16),
+              Card(
+                child: Column(
+                  children: [
+                    SwitchListTile(
+                      secondary: const Icon(Icons.volume_up),
+                      title: const Text("Sound Effects"),
+                      subtitle: const Text(
+                        "Play sounds for correct and passed words",
+                      ),
+                      value: audioEnabled,
+                      onChanged: updateAudio,
+                    ),
+                    const Divider(height: 1),
+                    SwitchListTile(
+                      secondary: const Icon(Icons.vibration),
+                      title: const Text("Vibration"),
+                      subtitle: const Text(
+                        "Enable haptic feedback during gameplay",
+                      ),
+                      value: hapticEnabled,
+                      onChanged: updateHaptic,
+                    ),
+                  ],
                 ),
-
-                const Divider(height: 1),
-
-                SwitchListTile(
-                  secondary: const Icon(Icons.vibration),
-
-                  title: const Text("Vibration"),
-
-                  subtitle: const Text(
-                    "Enable haptic feedback during gameplay",
-                  ),
-
-                  value: hapticEnabled,
-
-                  onChanged: updateHaptic,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
