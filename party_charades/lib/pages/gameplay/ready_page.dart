@@ -45,7 +45,9 @@ class _ReadyPageState extends State<ReadyPage> {
         ),
         child: SingleChildScrollView(
           child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
+            ),
             child: IntrinsicHeight(
               child: SafeArea(
                 child: Padding(
@@ -55,12 +57,19 @@ class _ReadyPageState extends State<ReadyPage> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ),
                       const Spacer(),
-                      const Icon(Icons.celebration, size: 90, color: Colors.white),
+                      const Icon(
+                        Icons.celebration,
+                        size: 90,
+                        color: Colors.white,
+                      ),
                       const SizedBox(height: 24),
                       Text(
                         widget.deck.name,
@@ -96,12 +105,19 @@ class _ReadyPageState extends State<ReadyPage> {
                         ),
                         child: const Column(
                           children: [
-                            Icon(Icons.phone_iphone, color: Colors.white, size: 40),
+                            Icon(
+                              Icons.phone_iphone,
+                              color: Colors.white,
+                              size: 40,
+                            ),
                             SizedBox(height: 16),
                             Text(
                               "Pass the phone to the player.\nTap START when everyone is ready!",
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white, fontSize: 18),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
                             ),
                           ],
                         ),

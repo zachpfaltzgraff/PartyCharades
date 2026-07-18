@@ -61,10 +61,6 @@ class _GamePageState extends State<GamePage> {
     urgencyTimer?.cancel();
     accelerometerSubscription?.cancel();
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
     super.dispose();
   }
 
@@ -134,8 +130,14 @@ class _GamePageState extends State<GamePage> {
     });
   }
 
-  void _finishGame() {
+  void _finishGame() async {
     timer?.cancel();
+
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    if (!mounted) return;
 
     Navigator.pushReplacement(
       context,
