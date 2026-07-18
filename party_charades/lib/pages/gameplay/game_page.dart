@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:party_charades/models/deck.dart';
+import 'package:party_charades/services/audio_service.dart';
 
 class GamePage extends StatefulWidget {
   final Deck deck;
@@ -25,19 +27,17 @@ class _GamePageState extends State<GamePage> {
   late List<String> words;
 
   late int timeRemaining;
-
   Timer? timer;
 
   int currentIndex = 0;
-
   final List<Answer> answers = [];
-
   int get correct => answers.where((answer) => answer.correct).length;
-
   int get passed => answers.where((answer) => !answer.correct).length;
 
   double dragX = 0;
   bool isAnimating = false;
+
+  Timer? urgencyTimer;
 
   @override
   void initState() {
@@ -108,7 +108,18 @@ class _GamePageState extends State<GamePage> {
   }
 
   void _answer(bool wasCorrect) {
-    answers.add(Answer(correct: wasCorrect, word: currentWord));
+    if (wasCorrect) {
+      AudioService().playCorrect();
+    } else {
+      AudioService().playWrong();
+    }
+
+    answers.add(
+      Answer(
+        correct: wasCorrect,
+        word: currentWord,
+      ),
+    );
 
     _nextWord();
   }
