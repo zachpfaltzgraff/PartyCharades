@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:party_charades/pages/settings/instruction_row.dart';
 import 'package:party_charades/services/settings_service.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -163,6 +164,79 @@ class _SettingsPageState extends State<SettingsPage> {
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
+              Card(
+  child: Padding(
+    padding: const EdgeInsets.all(20),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: const [
+            Icon(Icons.help_outline),
+            SizedBox(width: 12),
+            Text(
+              "How to Play",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+
+        InstructionRow(
+          icon: Icons.face_6_rounded,
+          title: "Hold it up",
+          description:
+              "Place your phone on your forehead so everyone else can see the word.",
+        ),
+
+        const SizedBox(height: 16),
+
+        InstructionRow(
+          icon: Icons.record_voice_over_rounded,
+          title: "Listen to clues",
+          description:
+              "Friends describe or act out the word without saying it while you guess.",
+        ),
+
+        const SizedBox(height: 16),
+
+        InstructionRow(
+          icon: Icons.keyboard_arrow_up_rounded,
+          iconColor: Colors.green,
+          title: "Tilt Up",
+          description: "You guessed correctly!",
+        ),
+
+        const SizedBox(height: 16),
+
+        InstructionRow(
+          icon: Icons.keyboard_arrow_down_rounded,
+          iconColor: Colors.red,
+          title: "Tilt Down",
+          description: "Skip to the next word.",
+        ),
+
+        const SizedBox(height: 20),
+
+        Center(
+          child: Text(
+            "Guess as many words as you can before time runs out!",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: colors.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
             ],
           ),
         ),

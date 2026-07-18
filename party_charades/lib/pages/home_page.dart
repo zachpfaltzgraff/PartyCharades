@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/create_new_deck.dart';
 import 'package:party_charades/pages/deck_card.dart';
-import 'package:party_charades/pages/settings_page.dart';
+import 'package:party_charades/pages/settings/settings_page.dart';
 import 'package:party_charades/services/deck_service.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -117,7 +117,12 @@ class _HomePageState extends State<HomePage> {
               child: RefreshIndicator(
                 onRefresh: loadDecks,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
+                  padding: const EdgeInsets.only(
+                    left: 8,
+                    right: 8,
+                    top: 8,
+                    bottom: 8,
+                  ),
                   child: loading
                       ? const Center(child: CircularProgressIndicator())
                       : GridView.builder(
