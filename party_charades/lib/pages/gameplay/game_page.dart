@@ -37,6 +37,8 @@ class _GamePageState extends State<GamePage> {
   StreamSubscription<AccelerometerEvent>? accelerometerSubscription;
   bool canAnswer = true;
 
+  bool get showingSwipeHint => dragX.abs() > 80;
+
   @override
   void initState() {
     super.initState();
@@ -236,67 +238,104 @@ class _GamePageState extends State<GamePage> {
                         ),
 
                         // Current draggable card
-                        GestureDetector(
-                          onHorizontalDragUpdate: (details) {
-                            if (!canAnswer) return;
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            if (showingSwipeHint)
+                              Positioned(
+                                top: 40,
+                                child: AnimatedOpacity(
+                                  duration: const Duration(milliseconds: 150),
+                                  opacity: 1,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: dragX > 0
+                                          ? Colors.green.withOpacity(.85)
+                                          : Colors.red.withOpacity(.85),
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: Text(
+                                      dragX > 0 ? "✓ CORRECT" : "✕ PASS",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            GestureDetector(
+                              onHorizontalDragUpdate: (details) {
+                                if (!canAnswer) return;
 
-                            setState(() {
-                              dragX += details.delta.dx;
-                            });
-                          },
+                                setState(() {
+                                  dragX += details.delta.dx;
+                                });
+                              },
 
-                          onHorizontalDragEnd: (_) {
-                            if (!canAnswer) return;
-                            
-                            if (dragX.abs() > 120) {
-                              final correct = dragX > 0;
+                              onHorizontalDragEnd: (_) {
+                                if (!canAnswer) return;
 
-                              setState(() {
-                                isAnimating = true;
-
-                                // fling card completely off screen
-                                dragX = correct
-                                    ? MediaQuery.of(context).size.width * 1.5
-                                    : -MediaQuery.of(context).size.width * 1.5;
-                              });
-
-                              Future.delayed(
-                                const Duration(milliseconds: 300),
-                                () {
-                                  _answer(correct);
+                                if (dragX.abs() > 120) {
+                                  final correct = dragX > 0;
 
                                   setState(() {
+                                    isAnimating = true;
+
+                                    // fling card completely off screen
+                                    dragX = correct
+                                        ? MediaQuery.of(context).size.width *
+                                              1.5
+                                        : -MediaQuery.of(context).size.width *
+                                              1.5;
+                                  });
+
+                                  Future.delayed(
+                                    const Duration(milliseconds: 300),
+                                    () {
+                                      _answer(correct);
+
+                                      setState(() {
+                                        dragX = 0;
+                                        isAnimating = false;
+                                      });
+                                    },
+                                  );
+                                } else {
+                                  setState(() {
+                                    isAnimating = true;
                                     dragX = 0;
-                                    isAnimating = false;
                                   });
-                                },
-                              );
-                            } else {
-                              setState(() {
-                                isAnimating = true;
-                                dragX = 0;
-                              });
 
-                              Future.delayed(
-                                const Duration(milliseconds: 200),
-                                () {
-                                  setState(() {
-                                    isAnimating = false;
-                                  });
-                                },
-                              );
-                            }
-                          },
+                                  Future.delayed(
+                                    const Duration(milliseconds: 200),
+                                    () {
+                                      setState(() {
+                                        isAnimating = false;
+                                      });
+                                    },
+                                  );
+                                }
+                              },
 
-                          child: AnimatedContainer(
-                            duration: isAnimating
-                                ? const Duration(milliseconds: 250)
-                                : Duration.zero,
+                              child: AnimatedContainer(
+                                duration: isAnimating
+                                    ? const Duration(milliseconds: 250)
+                                    : Duration.zero,
 
-                            transform: Matrix4.translationValues(dragX, 0, 0),
+                                transform: Matrix4.identity()
+                                  ..translate(dragX)
+                                  ..rotateZ(dragX / 700),
 
-                            child: _wordCard(currentWord),
-                          ),
+                                child: _wordCard(currentWord),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
