@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
+import 'package:party_charades/services/deck_import_export_service.dart';
 import 'package:party_charades/services/deck_service.dart';
 
 class CreateNewDeck extends StatefulWidget {
@@ -110,8 +111,32 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
     Navigator.pop(context, true);
   }
 
+  Future<void> _importDeck(BuildContext context) async {
+    try {
+      final deck = await DeckImportExportService.importDeck();
+
+      setState(() {
+        DeckService.saveDeck(deck);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Imported "${deck.name}" (${deck.words.length} words)')),
+      );
+    } on DeckImportException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Something went wrong importing that file.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Padding(
       padding: EdgeInsets.only(
         left: 20,
@@ -212,6 +237,21 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
                     style: TextStyle(color: Colors.red),
                   ),
                   onPressed: _deleteDeck,
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            if(widget.deck == null) ...[
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  icon: Icon(Icons.import_export, color: colors.primary),
+                  label: const Text(
+                    "Import",
+                  ),
+                  onPressed: () {
+                    _importDeck(context);
+                  },
                 ),
               ),
               const SizedBox(height: 12),

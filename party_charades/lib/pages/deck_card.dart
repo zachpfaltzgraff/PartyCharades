@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/create_new_deck.dart';
 import 'package:party_charades/pages/gameplay/ready_page.dart';
+import 'package:party_charades/services/deck_import_export_service.dart';
 
 class DeckCard extends StatelessWidget {
   final Deck deck;
@@ -92,6 +93,24 @@ class DeckCard extends StatelessWidget {
                   child: const Padding(
                     padding: EdgeInsets.all(6),
                     child: Icon(Icons.edit, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(30),
+                  onTap: () async {
+                    await DeckImportExportService.shareDeck(deck);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(6),
+                    child: Icon(Icons.file_upload_outlined, color: Colors.white),
                   ),
                 ),
               ),
