@@ -8,6 +8,13 @@ import 'package:party_charades/pages/gameplay/game_recap_page.dart';
 import 'package:party_charades/services/audio_service.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
+// Shared brand colors, kept consistent with the recap and ready screens.
+const _kCorrectColor = Color(0xFF1FB874);
+const _kPassedColor = Color(0xFFE84855);
+const _kUrgentColor = Color(0xFFE53935);
+const _kWarningColor = Color(0xFFFF8F00);
+const _kNormalTimerColor = Color(0xFF241C3D);
+
 class GamePage extends StatefulWidget {
   final Deck deck;
   final int roundLength;
@@ -18,7 +25,8 @@ class GamePage extends StatefulWidget {
   State<GamePage> createState() => _GamePageState();
 }
 
-class _GamePageState extends State<GamePage> {
+class _GamePageState extends State<GamePage>
+    with SingleTickerProviderStateMixin {
   late List<String> words;
 
   late int timeRemaining;
@@ -39,6 +47,11 @@ class _GamePageState extends State<GamePage> {
 
   bool get showingSwipeHint => dragX.abs() > 80;
 
+  // Visual pulse synced to the haptic urgency feedback in the final
+  // seconds of the round. Purely cosmetic — does not affect timing logic.
+  late final AnimationController _pulseController;
+  late final Animation<double> _pulseScale;
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +64,14 @@ class _GamePageState extends State<GamePage> {
 
     timeRemaining = widget.roundLength;
 
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _pulseScale = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
     _startTimer();
     _startTiltDetection();
   }
@@ -60,6 +81,7 @@ class _GamePageState extends State<GamePage> {
     timer?.cancel();
     urgencyTimer?.cancel();
     accelerometerSubscription?.cancel();
+    _pulseController.dispose();
 
     super.dispose();
   }
@@ -110,6 +132,10 @@ class _GamePageState extends State<GamePage> {
 
   void _handleUrgency() {
     if (timeRemaining > 10) {
+      if (_pulseController.isAnimating) {
+        _pulseController.stop();
+        _pulseController.value = 0;
+      }
       return;
     }
 
@@ -119,6 +145,9 @@ class _GamePageState extends State<GamePage> {
 
     if (timeRemaining <= 3) {
       interval = 150;
+      if (!_pulseController.isAnimating) {
+        _pulseController.repeat(reverse: true);
+      }
     } else if (timeRemaining <= 6) {
       interval = 350;
     } else {
@@ -191,6 +220,12 @@ class _GamePageState extends State<GamePage> {
     return "$minutes:$seconds";
   }
 
+  Color get _timerColor {
+    if (timeRemaining <= 3) return _kUrgentColor;
+    if (timeRemaining <= 10) return _kWarningColor;
+    return _kNormalTimerColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -222,8 +257,11 @@ class _GamePageState extends State<GamePage> {
                       children: [
                         Transform.scale(
                           scale: .92,
-                          child: _wordCard(
-                            words[(currentIndex + 1) % words.length],
+                          child: Opacity(
+                            opacity: .9,
+                            child: _wordCard(
+                              words[(currentIndex + 1) % words.length],
+                            ),
                           ),
                         ),
 
@@ -232,26 +270,49 @@ class _GamePageState extends State<GamePage> {
                           children: [
                             if (showingSwipeHint)
                               Center(
-                                child: AnimatedOpacity(
-                                  duration: const Duration(milliseconds: 150),
-                                  opacity: 1,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 30,
-                                      vertical: 12,
+                                child: AnimatedScale(
+                                  duration: const Duration(milliseconds: 120),
+                                  scale: (0.9 + (dragX.abs() / 120) * 0.3)
+                                      .clamp(0.9, 1.2),
+                                  child: AnimatedOpacity(
+                                    duration: const Duration(
+                                      milliseconds: 150,
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: dragX > 0
-                                          ? Colors.green.withOpacity(.85)
-                                          : Colors.red.withOpacity(.85),
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: Text(
-                                      dragX > 0 ? "✓ CORRECT" : "✕ PASS",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
+                                    opacity: 1,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 30,
+                                        vertical: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: dragX > 0
+                                            ? _kCorrectColor.withValues(
+                                                alpha: .92,
+                                              )
+                                            : _kPassedColor.withValues(
+                                                alpha: .92,
+                                              ),
+                                        borderRadius: BorderRadius.circular(
+                                          30,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: .2,
+                                            ),
+                                            blurRadius: 16,
+                                            offset: const Offset(0, 6),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        dragX > 0 ? "✓ CORRECT" : "✕ PASS",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w800,
+                                          letterSpacing: 0.6,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -338,51 +399,161 @@ class _GamePageState extends State<GamePage> {
   }
 
   Widget _wordCard(String word) {
+    final timerColor = _timerColor;
+
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .18),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(30),
       child: Column(
         children: [
-          Text(
-            timerText,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-            ),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _LiveScoreChip(correct: correct, passed: passed),
+              ),
+              ScaleTransition(
+                scale: _pulseScale,
+                child: Text(
+                  timerText,
+                  style: TextStyle(
+                    color: timerColor,
+                    fontSize: 36,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _TimerProgressBar(
+            value: widget.roundLength == 0
+                ? 0
+                : timeRemaining / widget.roundLength,
+            color: timerColor,
           ),
 
           Expanded(
             child: Center(
-              child: Text(
-                word,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 54,
-                  fontWeight: FontWeight.bold,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  word,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 54,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF241C3D),
+                  ),
                 ),
               ),
             ),
           ),
 
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text(
+              const Text(
                 "← Pass",
-                style: TextStyle(fontSize: 22, color: Colors.black54),
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: _kPassedColor,
+                ),
               ),
 
-              Text(
+              const Text(
                 "Correct →",
-                style: TextStyle(fontSize: 22, color: Colors.black54),
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: _kCorrectColor,
+                ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Slim countdown bar under the timer digits, color-matched to the
+/// current urgency state.
+class _TimerProgressBar extends StatelessWidget {
+  final double value;
+  final Color color;
+
+  const _TimerProgressBar({required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(999),
+      child: SizedBox(
+        height: 6,
+        child: LinearProgressIndicator(
+          value: value.clamp(0, 1),
+          backgroundColor: const Color(0xFFEDEAF5),
+          valueColor: AlwaysStoppedAnimation(color),
+        ),
+      ),
+    );
+  }
+}
+
+/// Small, unobtrusive running tally so players can glance at the score
+/// mid-round without it competing with the word itself.
+class _LiveScoreChip extends StatelessWidget {
+  final int correct;
+  final int passed;
+
+  const _LiveScoreChip({required this.correct, required this.passed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F1FA),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check_rounded, size: 14, color: _kCorrectColor),
+          const SizedBox(width: 3),
+          Text(
+            '$correct',
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: _kCorrectColor,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Icon(Icons.close_rounded, size: 14, color: _kPassedColor),
+          const SizedBox(width: 3),
+          Text(
+            '$passed',
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: _kPassedColor,
+            ),
           ),
         ],
       ),
