@@ -209,27 +209,19 @@ class _GamePageState extends State<GamePage> {
           ),
         ),
         child: SafeArea(
+          top: false,
+          bottom: false,
+          left: true,
+          right: true,
           child: Padding(
-            padding: const EdgeInsets.all(2),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             child: Column(
               children: [
-                Text(
-                  timerText,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
                 Expanded(
                   child: Center(
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        // Next card underneath
                         Transform.scale(
                           scale: .92,
                           child: _wordCard(
@@ -237,7 +229,6 @@ class _GamePageState extends State<GamePage> {
                           ),
                         ),
 
-                        // Current draggable card
                         Stack(
                           alignment: Alignment.center,
                           children: [
@@ -356,17 +347,19 @@ class _GamePageState extends State<GamePage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-            color: Colors.black.withValues(alpha: .25),
-          ),
-        ],
       ),
       padding: const EdgeInsets.all(30),
       child: Column(
         children: [
+          Text(
+            timerText,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
           Expanded(
             child: Center(
               child: Text(
