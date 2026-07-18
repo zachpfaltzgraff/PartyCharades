@@ -133,10 +133,6 @@ class _GamePageState extends State<GamePage> {
   void _finishGame() async {
     timer?.cancel();
 
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
     if (!mounted) return;
 
     Navigator.pushReplacement(
@@ -235,8 +231,7 @@ class _GamePageState extends State<GamePage> {
                           alignment: Alignment.center,
                           children: [
                             if (showingSwipeHint)
-                              Positioned(
-                                top: 40,
+                              Center(
                                 child: AnimatedOpacity(
                                   duration: const Duration(milliseconds: 150),
                                   opacity: 1,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
+import 'package:flutter/services.dart';
 import 'package:party_charades/models/answer.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/gameplay/game_page.dart';
@@ -32,6 +33,14 @@ class _GameRecapPageState extends State<GameRecapPage> {
   @override
   void initState() {
     super.initState();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.edgeToEdge,
+    );
 
     confettiController = ConfettiController(
       duration: const Duration(seconds: 5),
