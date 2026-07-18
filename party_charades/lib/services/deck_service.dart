@@ -7,7 +7,24 @@ import 'package:party_charades/models/deck.dart';
 import 'database_service.dart';
 
 class DeckService {
-  static const starterDecks = ['animals', 'movies', 'disney', 'food'];
+  static const starterDecks = [
+    'act_it_out',
+    'animals',
+    'blockbuster_movies',
+    'dc',
+    'disney',
+    'harry_potter',
+    'holiday_celebration',
+    'just_kidding',
+    'kids_vs_adults',
+    'marvel',
+    'on_the_job',
+    'songs',
+    'sport_athlete_actions',
+    'star_wars',
+    'thats_so_90',
+    'video_games',
+  ];
 
   static Future<void> loadStarterDecks() async {
     final existing = await DatabaseService.isar.decks.count();
