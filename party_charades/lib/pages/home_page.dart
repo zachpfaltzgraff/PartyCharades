@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     loadDecks();
 
     bannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-5936113316990256~8049431277',
+      adUnitId: 'ca-app-pub-5936113316990256/9315245635',
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -117,7 +117,7 @@ class _HomePageState extends State<HomePage> {
               child: RefreshIndicator(
                 onRefresh: loadDecks,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
                   child: loading
                       ? const Center(child: CircularProgressIndicator())
                       : GridView.builder(

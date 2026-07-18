@@ -1,6 +1,7 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:party_charades/models/answer.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/gameplay/game_page.dart';
@@ -61,8 +62,9 @@ class _GameRecapPageState extends State<GameRecapPage>
 
   int get correct => widget.answers.where((a) => a.correct).length;
   int get passed => widget.answers.where((a) => !a.correct).length;
-  int get total => widget.answers.length;
-  double get accuracy => total == 0 ? 0 : correct / total;
+
+  BannerAd? bannerAd;
+  bool loadedAdProperly = false;
 
   @override
   void initState() {
@@ -93,6 +95,23 @@ class _GameRecapPageState extends State<GameRecapPage>
 
     _entranceController.forward();
     _confettiController.play();
+
+    bannerAd = BannerAd(
+      adUnitId: 'ca-app-pub-5936113316990256/5545903895',
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            loadedAdProperly = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('Banner failed: $error');
+          ad.dispose();
+        },
+      ),
+    )..load();
   }
 
   @override
@@ -174,6 +193,13 @@ class _GameRecapPageState extends State<GameRecapPage>
                         },
                         onBackToDecks: () => Navigator.pop(context),
                       ),
+                      if (loadedAdProperly)
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 6),
+                          height: bannerAd!.size.height.toDouble(),
+                          width: bannerAd!.size.width.toDouble(),
+                          child: AdWidget(ad: bannerAd!),
+                        ),
                     ],
                   ),
                 ),
