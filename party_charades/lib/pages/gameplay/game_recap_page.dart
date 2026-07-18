@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'package:party_charades/models/answer.dart';
+import 'package:party_charades/models/deck.dart';
+import 'package:party_charades/pages/gameplay/game_page.dart';
 
 class GameRecapPage extends StatefulWidget {
   final List<Answer> answers;
   final String deckName;
+  final Deck deck;
+  final int roundLength;
 
   const GameRecapPage({
     super.key,
     required this.answers,
     required this.deckName,
+    required this.deck,
+    required this.roundLength,
   });
 
   @override
@@ -164,7 +170,40 @@ class _GameRecapPageState extends State<GameRecapPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text("Back to Decks"),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton.icon(
+                              icon: const Icon(Icons.replay),
+                              label: const Text("Play Again"),
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => GamePage(
+                                      deck: widget.deck,
+                                      roundLength: widget.roundLength,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Back to Decks"),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

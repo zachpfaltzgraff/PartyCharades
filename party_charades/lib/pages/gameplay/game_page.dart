@@ -109,6 +109,8 @@ class _GamePageState extends State<GamePage> {
         builder: (_) => GameRecapPage(
           answers: answers,
           deckName: widget.deck.name,
+          deck: widget.deck,
+          roundLength: widget.roundLength,
         ),
       ),
     );
