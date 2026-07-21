@@ -72,7 +72,6 @@ class _GameRecapPageState extends State<GameRecapPage>
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
     _confettiController = ConfettiController(
       duration: const Duration(seconds: 4),

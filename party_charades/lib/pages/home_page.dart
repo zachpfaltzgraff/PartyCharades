@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/create_new_deck.dart';
 import 'package:party_charades/pages/deck_card.dart';
@@ -24,6 +25,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+  
     loadDecks();
 
     bannerAd = BannerAd(

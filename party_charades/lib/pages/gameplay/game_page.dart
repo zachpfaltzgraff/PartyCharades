@@ -4,17 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:party_charades/models/answer.dart';
 import 'package:party_charades/models/deck.dart';
+import 'package:party_charades/pages/gameplay/game_page_components/cancel_round_button.dart';
+import 'package:party_charades/pages/gameplay/game_page_components/game_theme.dart';
+import 'package:party_charades/pages/gameplay/game_page_components/live_score_chip.dart';
+import 'package:party_charades/pages/gameplay/game_page_components/timer_progress_bar.dart';
 import 'package:party_charades/pages/gameplay/game_recap_page.dart';
 import 'package:party_charades/services/audio_service.dart';
 import 'package:party_charades/services/settings_service.dart';
 import 'package:sensors_plus/sensors_plus.dart';
-
-// Shared brand colors, kept consistent with the recap and ready screens.
-const _kCorrectColor = Color(0xFF1FB874);
-const _kPassedColor = Color(0xFFE84855);
-const _kUrgentColor = Color(0xFFE53935);
-const _kWarningColor = Color(0xFFFF8F00);
-const _kNormalTimerColor = Color(0xFF241C3D);
 
 class GamePage extends StatefulWidget {
   final Deck deck;
@@ -215,6 +212,38 @@ class _GamePageState extends State<GamePage>
     );
   }
 
+  void _confirmQuit() async {
+    urgencyTimer?.cancel();
+    final shouldQuit = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => AlertDialog(
+        title: const Text('End round?'),
+        content: const Text('Your progress in this round will be lost.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Keep playing'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('End round', style: TextStyle(color: GameTheme().passedColor)),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (shouldQuit == true) {
+      timer?.cancel();
+      accelerometerSubscription?.cancel();
+      Navigator.pop(context); // back to whatever screen launched GamePage
+    } else {
+      _handleUrgency(); // resume urgency ticking if round is still going
+    }
+  }
+
   void _answer(bool wasCorrect) {
     if (!canAnswer || showCountdown) return;
 
@@ -255,9 +284,9 @@ class _GamePageState extends State<GamePage>
   }
 
   Color get _timerColor {
-    if (timeRemaining <= 3) return _kUrgentColor;
-    if (timeRemaining <= 10) return _kWarningColor;
-    return _kNormalTimerColor;
+    if (timeRemaining <= 3) return GameTheme().urgentColor;
+    if (timeRemaining <= 10) return GameTheme().warningColor;
+    return GameTheme().normalTimerColor;
   }
 
   String get _countdownText => countdownValue > 0 ? '$countdownValue' : 'GO!';
@@ -320,10 +349,10 @@ class _GamePageState extends State<GamePage>
                                       ),
                                       decoration: BoxDecoration(
                                         color: dragX > 0
-                                            ? _kCorrectColor.withValues(
+                                            ? GameTheme().correctColor.withValues(
                                                 alpha: .92,
                                               )
-                                            : _kPassedColor.withValues(
+                                            : GameTheme().passedColor.withValues(
                                                 alpha: .92,
                                               ),
                                         borderRadius: BorderRadius.circular(30),
@@ -425,6 +454,11 @@ class _GamePageState extends State<GamePage>
                             if (showCountdown) _countdownOverlay(),
                           ],
                         ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: CancelRoundButton(onTap: _confirmQuit),
+                        ),
                       ],
                     ),
                   ),
@@ -498,7 +532,7 @@ class _GamePageState extends State<GamePage>
             children: [
               Align(
                 alignment: Alignment.centerLeft,
-                child: _LiveScoreChip(correct: correct, passed: passed),
+                child: LiveScoreChip(correct: correct, passed: passed),
               ),
               ScaleTransition(
                 scale: _pulseScale,
@@ -514,7 +548,7 @@ class _GamePageState extends State<GamePage>
             ],
           ),
           const SizedBox(height: 12),
-          _TimerProgressBar(
+          TimerProgressBar(
             value: widget.roundLength == 0
                 ? 0
                 : timeRemaining / widget.roundLength,
@@ -546,7 +580,7 @@ class _GamePageState extends State<GamePage>
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: _kPassedColor,
+                  color: GameTheme().passedColor,
                 ),
               ),
 
@@ -555,80 +589,10 @@ class _GamePageState extends State<GamePage>
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: _kCorrectColor,
+                  color: GameTheme().correctColor,
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Slim countdown bar under the timer digits, color-matched to the
-/// current urgency state.
-class _TimerProgressBar extends StatelessWidget {
-  final double value;
-  final Color color;
-
-  const _TimerProgressBar({required this.value, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(999),
-      child: SizedBox(
-        height: 6,
-        child: LinearProgressIndicator(
-          value: value.clamp(0, 1),
-          backgroundColor: const Color(0xFFEDEAF5),
-          valueColor: AlwaysStoppedAnimation(color),
-        ),
-      ),
-    );
-  }
-}
-
-/// Small, unobtrusive running tally so players can glance at the score
-/// mid-round without it competing with the word itself.
-class _LiveScoreChip extends StatelessWidget {
-  final int correct;
-  final int passed;
-
-  const _LiveScoreChip({required this.correct, required this.passed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF3F1FA),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.check_rounded, size: 14, color: _kCorrectColor),
-          const SizedBox(width: 3),
-          Text(
-            '$correct',
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: _kCorrectColor,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Icon(Icons.close_rounded, size: 14, color: _kPassedColor),
-          const SizedBox(width: 3),
-          Text(
-            '$passed',
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: _kPassedColor,
-            ),
           ),
         ],
       ),
