@@ -45,14 +45,10 @@ class _GamePageState extends State<GamePage>
 
   bool get showingSwipeHint => dragX.abs() > 80;
 
-  // Pre-round 3-2-1 countdown state. Nothing in the round (timer, tilt
-  // detection, swipes) is active until this finishes.
   bool showCountdown = true;
   int countdownValue = 3;
   Timer? countdownTimer;
 
-  // Visual pulse synced to the haptic urgency feedback in the final
-  // seconds of the round. Purely cosmetic — does not affect timing logic.
   late final AnimationController _pulseController;
   late final Animation<double> _pulseScale;
 
