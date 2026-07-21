@@ -112,11 +112,12 @@ class DeckCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                       onTap: () async {
                         AudioService().playHapticCorrect();
-                        final box = iconContext.findRenderObject() as RenderBox?;
+                        final box =
+                            iconContext.findRenderObject() as RenderBox?;
                         final origin = box != null
                             ? box.localToGlobal(Offset.zero) & box.size
                             : null;
-                    
+
                         await DeckImportExportService.shareDeck(
                           deck,
                           sharePositionOrigin: origin,
@@ -124,10 +125,13 @@ class DeckCard extends StatelessWidget {
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(6),
-                        child: Icon(Icons.file_upload_outlined, color: Colors.white),
+                        child: Icon(
+                          Icons.file_upload_outlined,
+                          color: Colors.white,
+                        ),
                       ),
                     );
-                  }
+                  },
                 ),
               ),
             ),

@@ -6,6 +6,7 @@ import 'package:party_charades/models/answer.dart';
 import 'package:party_charades/models/deck.dart';
 import 'package:party_charades/pages/gameplay/game_recap_page.dart';
 import 'package:party_charades/services/audio_service.dart';
+import 'package:party_charades/services/settings_service.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
 // Shared brand colors, kept consistent with the recap and ready screens.
@@ -58,6 +59,8 @@ class _GamePageState extends State<GamePage>
   late final AnimationController _pulseController;
   late final Animation<double> _pulseScale;
 
+  bool tiltControl = SettingsService.defaultTiltControl;
+
   @override
   void initState() {
     super.initState();
@@ -92,8 +95,13 @@ class _GamePageState extends State<GamePage>
     super.dispose();
   }
 
-  void _startCountdown() {
+  void _startCountdown() async {
     HapticFeedback.mediumImpact();
+    bool tilt = await SettingsService.getTiltControl();
+
+    setState(() {
+      tiltControl = tilt;
+    });
 
     countdownTimer = Timer.periodic(const Duration(milliseconds: 1250), (t) {
       if (!mounted) return;
@@ -106,7 +114,10 @@ class _GamePageState extends State<GamePage>
         });
 
         _startTimer();
-        _startTiltDetection();
+        if (!tiltControl) {
+          // only start if tilt controls enabled
+          _startTiltDetection();
+        }
         return;
       }
 
@@ -240,7 +251,7 @@ class _GamePageState extends State<GamePage>
 
     final seconds = (timeRemaining % 60).toString().padLeft(2, '0');
 
-    return "$minutes:$seconds";
+    return '$minutes:$seconds';
   }
 
   Color get _timerColor {
@@ -327,7 +338,7 @@ class _GamePageState extends State<GamePage>
                                         ],
                                       ),
                                       child: Text(
-                                        dragX > 0 ? "✓ CORRECT" : "✕ PASS",
+                                        dragX > 0 ? '✓ CORRECT' : '✕ PASS',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 28,
@@ -341,6 +352,7 @@ class _GamePageState extends State<GamePage>
                               ),
                             GestureDetector(
                               onHorizontalDragUpdate: (details) {
+                                if (tiltControl) return;
                                 if (!canAnswer || showCountdown) return;
 
                                 setState(() {
@@ -349,6 +361,7 @@ class _GamePageState extends State<GamePage>
                               },
 
                               onHorizontalDragEnd: (_) {
+                                if (tiltControl) return;
                                 if (!canAnswer || showCountdown) return;
 
                                 if (dragX.abs() > 120) {
@@ -394,17 +407,19 @@ class _GamePageState extends State<GamePage>
                                 }
                               },
 
-                              child: AnimatedContainer(
-                                duration: isAnimating
-                                    ? const Duration(milliseconds: 250)
-                                    : Duration.zero,
+                              child: tiltControl
+                                  ? _wordCard(currentWord)
+                                  : AnimatedContainer(
+                                      duration: isAnimating
+                                          ? const Duration(milliseconds: 250)
+                                          : Duration.zero,
 
-                                transform: Matrix4.identity()
-                                  ..translate(dragX)
-                                  ..rotateZ(dragX / 700),
+                                      transform: Matrix4.identity()
+                                        ..translate(dragX)
+                                        ..rotateZ(dragX / 700),
 
-                                child: _wordCard(currentWord),
-                              ),
+                                      child: _wordCard(currentWord),
+                                    ),
                             ),
 
                             if (showCountdown) _countdownOverlay(),
@@ -526,8 +541,8 @@ class _GamePageState extends State<GamePage>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              const Text(
-                "← Pass",
+              Text(
+                tiltControl ? '↑ Pass' : '← Pass',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -535,8 +550,8 @@ class _GamePageState extends State<GamePage>
                 ),
               ),
 
-              const Text(
-                "Correct →",
+              Text(
+                tiltControl ? '↓ Correct' : 'Correct →',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,

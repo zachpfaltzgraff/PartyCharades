@@ -4,10 +4,14 @@ class SettingsService {
   static const _roundLengthKey = 'round_length';
   static const _audioKey = 'audio';
   static const _hapticKey = 'haptic';
+  static const _tiltControl = 'tiltControl';
 
   static const int defaultRoundLength = 60;
   static const bool defaultAudio = true;
   static const bool defaultHaptic = true;
+  static const bool defaultTiltControl = true;
+
+  static const bool tiltControl = true;
 
   static Future<int> getRoundLength() async {
     final prefs = await SharedPreferences.getInstance();
@@ -43,5 +47,17 @@ class SettingsService {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setBool(_hapticKey, audio);
+  }
+
+  static Future<bool> getTiltControl() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getBool(_tiltControl) ?? defaultTiltControl;
+  }
+
+  static Future<void> setTiltControl(bool tilt) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool(_tiltControl, tilt);
   }
 }

@@ -20,10 +20,9 @@ class DeckImportException implements Exception {
 
 class DeckImportExportService {
   static Future<void> shareDeck(Deck deck, {Rect? sharePositionOrigin}) async {
-    final jsonString = const JsonEncoder.withIndent('  ').convert({
-      'name': deck.name,
-      'words': deck.words,
-    });
+    final jsonString = const JsonEncoder.withIndent(
+      '  ',
+    ).convert({'name': deck.name, 'words': deck.words});
 
     final sanitizedName = _sanitizeFileName(deck.name);
     final directory = await getTemporaryDirectory();
@@ -117,8 +116,8 @@ class DeckImportExportService {
     }
 
     return Deck()
-        ..name = nameValue.trim()
-        ..words = uniqueWords;
+      ..name = nameValue.trim()
+      ..words = uniqueWords;
   }
 
   static String _sanitizeFileName(String name) {

@@ -126,16 +126,20 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
       await DeckService.saveDeck(deck);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Imported "${deck.name}" (${deck.words.length} words)')),
+        SnackBar(
+          content: Text('Imported "${deck.name}" (${deck.words.length} words)'),
+        ),
       );
       Navigator.pop(context, true);
     } on DeckImportException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Something went wrong importing that file.')),
+        const SnackBar(
+          content: Text('Something went wrong importing that file.'),
+        ),
       );
     }
   }
@@ -248,14 +252,12 @@ class _CreateNewDeckState extends State<CreateNewDeck> {
               ),
               const SizedBox(height: 12),
             ],
-            if(widget.deck == null) ...[
+            if (widget.deck == null) ...[
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   icon: Icon(Icons.import_export, color: colors.primary),
-                  label: const Text(
-                    "Import",
-                  ),
+                  label: const Text("Import"),
                   onPressed: () {
                     _importDeck(context);
                   },

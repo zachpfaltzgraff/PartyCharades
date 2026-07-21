@@ -42,10 +42,7 @@ class InstructionRow extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 description,
-                style: TextStyle(
-                  color: Colors.grey.shade700,
-                  height: 1.35,
-                ),
+                style: TextStyle(color: Colors.grey.shade700, height: 1.35),
               ),
             ],
           ),

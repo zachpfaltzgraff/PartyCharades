@@ -14,6 +14,7 @@ class _SettingsPageState extends State<SettingsPage> {
   int roundLength = SettingsService.defaultRoundLength;
   bool audioEnabled = SettingsService.defaultAudio;
   bool hapticEnabled = SettingsService.defaultHaptic;
+  bool tiltControl = SettingsService.defaultTiltControl;
   bool loading = true;
 
   @override
@@ -29,12 +30,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
     final haptic = await SettingsService.getHaptic();
 
+    final tilt = await SettingsService.getTiltControl();
+
     if (!mounted) return;
 
     setState(() {
       roundLength = length;
       audioEnabled = audio;
       hapticEnabled = haptic;
+      tiltControl = tilt;
       loading = false;
     });
   }
@@ -65,6 +69,16 @@ class _SettingsPageState extends State<SettingsPage> {
     });
 
     await SettingsService.setHaptic(value);
+  }
+
+  Future<void> updateTilt(bool value) async {
+    AudioService().playHapticCorrect();
+
+    setState(() {
+      tiltControl = value;
+    });
+
+    await SettingsService.setTiltControl(value);
   }
 
   @override
@@ -167,82 +181,92 @@ class _SettingsPageState extends State<SettingsPage> {
                       value: hapticEnabled,
                       onChanged: updateHaptic,
                     ),
+                    const Divider(height: 1),
+                    SwitchListTile(
+                      secondary: const Icon(Icons.screen_rotation_rounded),
+                      title: const Text("Tilt Controls"),
+                      subtitle: const Text(
+                        "Play with tilt controls or swipe controls",
+                      ),
+                      value: tiltControl,
+                      onChanged: updateTilt,
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
               Card(
-  child: Padding(
-    padding: const EdgeInsets.all(20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: const [
-            Icon(Icons.help_outline),
-            SizedBox(width: 12),
-            Text(
-              "How to Play",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: const [
+                          Icon(Icons.help_outline),
+                          SizedBox(width: 12),
+                          Text(
+                            "How to Play",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      InstructionRow(
+                        icon: Icons.face_6_rounded,
+                        title: "Hold it up",
+                        description:
+                            "Place your phone on your forehead so everyone else can see the word.",
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      InstructionRow(
+                        icon: Icons.record_voice_over_rounded,
+                        title: "Listen to clues",
+                        description:
+                            "Friends describe or act out the word without saying it while you guess.",
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      InstructionRow(
+                        icon: Icons.keyboard_arrow_down_rounded,
+                        iconColor: Colors.green,
+                        title: "Tilt Down / Swipe Right",
+                        description: "You guessed correctly!",
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      InstructionRow(
+                        icon: Icons.keyboard_arrow_up_rounded,
+                        iconColor: Colors.red,
+                        title: "Tilt Up / Swipe Left",
+                        description: "Skip to the next word.",
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      Center(
+                        child: Text(
+                          "Guess as many words as you can before time runs out!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: colors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-
-        InstructionRow(
-          icon: Icons.face_6_rounded,
-          title: "Hold it up",
-          description:
-              "Place your phone on your forehead so everyone else can see the word.",
-        ),
-
-        const SizedBox(height: 16),
-
-        InstructionRow(
-          icon: Icons.record_voice_over_rounded,
-          title: "Listen to clues",
-          description:
-              "Friends describe or act out the word without saying it while you guess.",
-        ),
-
-        const SizedBox(height: 16),
-
-        InstructionRow(
-          icon: Icons.keyboard_arrow_down_rounded,
-          iconColor: Colors.green,
-          title: "Tilt Down",
-          description: "You guessed correctly!",
-        ),
-
-        const SizedBox(height: 16),
-
-        InstructionRow(
-          icon: Icons.keyboard_arrow_up_rounded,
-          iconColor: Colors.red,
-          title: "Tilt Up",
-          description: "Skip to the next word.",
-        ),
-
-        const SizedBox(height: 20),
-
-        Center(
-          child: Text(
-            "Guess as many words as you can before time runs out!",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: colors.primary,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-),
             ],
           ),
         ),
