@@ -27,8 +27,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-  
+
     loadDecks();
 
     bannerAd = BannerAd(

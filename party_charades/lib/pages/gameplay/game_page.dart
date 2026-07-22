@@ -85,6 +85,9 @@ class _GamePageState extends State<GamePage>
     accelerometerSubscription?.cancel();
     _pulseController.dispose();
 
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
     super.dispose();
   }
 
@@ -107,7 +110,7 @@ class _GamePageState extends State<GamePage>
         });
 
         _startTimer();
-        if (!tiltControl) {
+        if (tiltControl) {
           // only start if tilt controls enabled
           _startTiltDetection();
         }
